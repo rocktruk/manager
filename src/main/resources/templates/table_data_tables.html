@@ -122,21 +122,21 @@
 		            		<div class="form-group">
 			            		<label class="control-label">父级分类：</label>
 			            		<select name="parent" id="parent" class="form-control">
-			            		 	<option value="0" selected="" >选择父级分类...</option>
-                                    <option th:value="${parentId.id}" selected="" th:each="parentId:${params.parentLs}" th:text="${parentId.menuName}"></option>
+			            		 	<option value="0" selected="selected" >选择父级分类...</option>
+                                    <option th:each="parentMenu:${params.parentLs}" th:value="${parentMenu.id}" selected="" th:text="${parentMenu.menuName}"></option>
                                 </select>
 			            	</div>
 		            	</div>
 		            	<div class="row">
 		            		<div class="form-group">
 			            		<label class="control-label">分类图标：</label>
-			            		<input type="file" name="uploadfile" id="uploadfile" multiple class="file-loading form-control" />
+			            		<input type="file" name="uploadfile" id="uploadfile" class="file-loading form-control" />
 			            	</div>
 		            	</div>
 		            </div>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-		                <button type="button" class="btn btn-primary">提交更改</button>
+		                <button type="button" onclick="addClassified()" class="btn btn-primary">提交</button>
 		            </div>
 		        </div><!-- /.modal-content -->
 		    </div><!-- /.modal -->
@@ -167,19 +167,19 @@
             <table class="table table-striped table-bordered table-hover " id="editable" >
             <thead>
             <tr>
-                <th style="display:none">id</th>
+                <th></th>
                 <th>分类名称</th>
                 <th>父菜单</th>
                 <th style="display:none">parentId</th>
             </tr>
             </thead>
             <tbody>
-            	<tr th:each="menu:${params.classified}">
-            		<td style="display:none" th:text="${menu.id}"></td>
-            		<td th:text="${menu.menuName}"></td>
-            		<td th:text="${menu.parentName}"></td>
-            		<td style="display:none" th:text="${menu.parentId}"></td>
-            	</tr>
+<!--             	<tr th:each="menu:${params.classified}"> -->
+<!--             		<td style="display:none" th:text="${menu.id}"></td> -->
+<!--             		<td th:text="${menu.menuName}"></td> -->
+<!--             		<td th:text="${menu.parentName}"></td> -->
+<!--             		<td style="display:none" th:text="${menu.parentId}"></td> -->
+<!--             	</tr> -->
             </tbody>
 <!--             <tfoot> -->
 <!--             <tr> -->
@@ -294,11 +294,10 @@
             		 //ajax请求数据
             		 $.ajax({
             		     type: "POST",
-            		     url: "/loadMenuWithPage",
+            		     url: "/mall/loadMenuWithPage",
             		     cache: false,  //禁用缓存
-            		     data: JSON.stringify(param),
+            		     data: param,
             		     dataType: "json",
-            		     contentType:"application/json",
             		     success: function (result) {
             		         //封装返回数据
             		         var returnData = {};
@@ -309,9 +308,24 @@
             		         //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
             		         //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
 //             		         callback(returnData);
+            		     },
+            		     error: function(msg){
+            		    	 console.log(msg);
             		     }
             		 });
-            	 }
+            	 },
+            	 "columns":[
+            		 {
+            			 "data":"id",
+           				 render(data, type, full, meta) { 
+            				 	return '<input type="checkbox" class="checkchild" value="${data}" />';
+                         }
+
+            		 },
+            		 {"data":"menuName"},
+            		 {"data":"parentName"},
+            		 {"data":"parentId"}
+            	 ]
             	
             });
             
@@ -319,7 +333,7 @@
 
                 language: 'zh', //设置语言
 
-                uploadUrl:"/upload.do", //上传的地址
+                uploadUrl:"/mall/upload", //上传的地址
     			
                 allowedFileTypes : [ 'image' ],//允许上传的文件类型
                 
@@ -379,13 +393,14 @@
     			   };
     	   $.ajax({
     		data: JSON.stringify(data),
-       		url:  "/loadGoods",
+       		url:  "/mall/addMenu",
        		type: "POST",
        		contentType:"application/json",
        		success:function(data){
-       			$("#uploadfile").fileinput({
+       			debugger;
+       			$("#uploadfile").fileinput('refresh',{
        				uploadExtraData:{
-       					'previewId':data.id
+       					'id':data.id
        				}
        			});
        			$("#uploadfile").fileinput('upload');

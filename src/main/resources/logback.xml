@@ -1,0 +1,34 @@
+<configuration scan="true" scanPeriod="60 seconds" debug="true">
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>
+        %d{HH:mm:ss.SSS}|[%thread]|%-5level|%logger{26}|%c|%L - %msg%n
+      </pattern>
+    </encoder>
+  </appender>
+	
+	<appender name="tracelog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/app/tomcat/logs/touda-trace.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>/app/tomcat/logs/touda-trace.%d{yyyyMMdd}.%i.log.gz</fileNamePattern>
+			<maxHistory>60</maxHistory>
+			<maxFileSize>50MB</maxFileSize>
+			<totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+		<encoder>
+			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS}|%thread|%-5level|%logger{26}|%msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	
+    <logger name="com.online.mall.manager" level="info" additivity="false">
+        <appender-ref ref="tracelog"/>
+        <appender-ref ref="stdout"/>
+    </logger>
+	
+  <root level="debug">
+ 	<appender-ref ref="tracelog"/>
+	<appender-ref ref="stdout"/>
+  </root>
+
+</configuration>

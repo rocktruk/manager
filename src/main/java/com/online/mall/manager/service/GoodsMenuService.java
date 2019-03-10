@@ -64,14 +64,13 @@ public class GoodsMenuService {
 	{
 		Map<String,Object> result = new HashMap<String, Object>();
 		Map<String,Map<String,Object>> menuMap = new HashMap<String, Map<String,Object>>();
-		Map<String,Object> parentLs = new HashMap<String, Object>();
+		List<GoodsMenu> parentLs = new ArrayList<GoodsMenu>();
 		for(GoodsMenu menu : ls)
 		{
 			Map<String,Object> map = new HashMap<String, Object>();
 			if(menu.getParentId()==0)
 			{
-				parentLs.put("id",menu.getId());
-				parentLs.put("menuName",menu.getMenuName());
+				parentLs.add(menu);
 			}else {
 				//设置所有存在父级菜单的父菜单名称
 				if(menuMap.get(menu.getParentId())!=null)
