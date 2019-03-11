@@ -21,5 +21,9 @@ public interface GoodsMenuRepository extends IExpandJpaRepository<GoodsMenu, Int
 	@Query("select g from GoodsMenu g where g.menuName = ?1")
 	Optional<GoodsMenu> findGoodsMenuByMenuName(String menuName);
 	
+	@Transactional
+	@Modifying
+	@Query("update GoodsMenu set imageSrc = ?2 where id = ?1")
+	int updateMenuWithId(int id,String menuSrc);
 	
 }

@@ -19,11 +19,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
+import com.online.mall.manager.common.IConstants;
+import com.online.mall.manager.common.RespConstantsUtil;
 import com.online.mall.manager.entity.GoodsMenu;
 import com.online.mall.manager.service.GoodsMenuService;
 
@@ -32,8 +35,6 @@ public class GoodsManagerControl {
 
 	private static final Logger log = LoggerFactory.getLogger(GoodsManagerControl.class);
 	
-	@Value(value="${file.uploadFolder}")
-	private String uploadPath;
 	
 	@Autowired
 	private GoodsMenuService service;
@@ -55,7 +56,9 @@ public class GoodsManagerControl {
 	
 	@RequestMapping("/loadMenuWithPage")
 	@ResponseBody
-	public Map<String,Object> loadMenuWithPage(HttpServletRequest request,@RequestBody Map<String,Object> req)
+	public Map<String,Object> loadMenuWithPage(HttpServletRequest request,@RequestParam(value = "length") String length,
+			@RequestParam(value = "start") String start,
+			@RequestParam(value = "draw") String draw)
 	{
 		Map<String,Object> result = new HashMap<String, Object>();
 		
@@ -71,40 +74,30 @@ public class GoodsManagerControl {
 		GoodsMenu menu = new GoodsMenu();
 		menu.setMenuName(req.get("menuName").toString());
 		menu.setParentId(Integer.parseInt(req.get("parent").toString()));
-		service.addMenu(menu);
-		result.put("id",service.findByMenuName(req.get("menuName").toString()));
+		//添加新菜单
+		String code = service.addMenu(menu);
+		result.put(IConstants.RESP_MSG, code);
+		result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getMsgByCode(code));
+		//返回插入成功菜单的ID,用于后续图片上传的路径
+		if(RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC).equals(code))
+		{
+			result.put("id",service.findByMenuName(req.get("menuName").toString()));
+		}
 		return result;
 	}
 	
 	
 	@RequestMapping("/upload")
-	public void uploadImage(MultipartHttpServletRequest request)
+	@ResponseBody
+	public Map<String,Object> uploadImage(MultipartHttpServletRequest request)
 	{
+		
 		log.debug("开始上传图片");
 		String id = request.getParameter("id");
 		MultiValueMap<String, MultipartFile> map = request.getMultiFileMap();
 		MultipartFile img = ((MultipartFile)map.get("uploadfile").get(0));
-		InputStream input=null;
-		OutputStream out=null;
-		try {
-			input = img.getInputStream();
-			File f = new File(uploadPath+id+File.separator+img.getOriginalFilename());
-			out = new FileOutputStream(f);
-			if(f.createNewFile())
-			{
-				FileUtil.copyStream(input, out);
-			}
-		} catch (IOException e) {
-			log.error(e.getMessage(),e);
-		}finally {
-			try {
-				input.close();
-				out.close();
-			} catch (IOException e) {
-				log.error(e.getMessage(),e);
-			}
-			
-		}
+		Map<String,Object> result = service.writeUploadFile(img, id);
+		return result;
 	}
 	
 }
