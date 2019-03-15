@@ -16,6 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,10 +83,80 @@ public class GoodsMenuService {
 		goodsMenu.updateMenuWithId(id,imgSrc);
 	}
 	
-	
-	public Map<String,Object> menuTable()
+	/**
+	 * 获取父级菜单列表
+	 * @return
+	 */
+	public Map<String,Object> menuParentTable()
 	{
 		Map<String,Object> result = getMenuParent(findAll());
+		return result;
+	}
+	
+	/**
+	 * datatable分页查询菜单列表
+	 * @param lenght
+	 * @param start
+	 * @return
+	 */
+	public Map<String,Object> getMenuWithPage(int length,int start)
+	{
+		GoodsMenu gomenu = new GoodsMenu();
+		List<Map<String,Object>> ls =findGoodsByMenuWithSort(start,length,gomenu);
+		long total = goodsMenu.count();
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("data", ls);
+		map.put("recordsTotal", total);
+		map.put("recordsFiltered", total);
+		map.put("draw", start+1);
+		return map;
+	}
+	
+	
+	/**
+	 * 分页查询菜单
+	 * @param start
+	 * @param lenght
+	 * @return
+	 */
+	public List<Map<String,Object>> findGoodsByMenuWithSort(int start,int lenght,GoodsMenu gomenu)
+	{
+		ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("id","parentId");
+		Example<GoodsMenu> example = Example.of(gomenu,matcher);
+		PageRequest page = null;
+		page = PageRequest.of(start, lenght);
+		Map<String,Map<String,Object>> menuMap = new HashMap<String, Map<String,Object>>();
+		List<GoodsMenu> ls = goodsMenu.findAll(example,page).getContent();
+		List<Map<String,Object>> result = new ArrayList<Map<String,Object>>();
+		for(GoodsMenu menu : ls)
+		{
+			Map<String,Object> map = new HashMap<String, Object>();
+			if(menu.getParentId()==0)
+			{
+				map.put("parentName", "");
+			}else
+			{
+				//设置所有存在父级菜单的父菜单名称
+				if(menuMap.get(menu.getParentId())!=null)
+				{
+					map.put("parentName", menuMap.get(menu.getParentId()).get("menuame"));
+				}else
+				{
+					for(GoodsMenu godsMenu : ls)
+					{
+						if(godsMenu.getId()==menu.getParentId())
+						{
+							map.put("parentName", godsMenu.getMenuName());
+						}
+					}
+				}
+			}
+			map.put("id", menu.getId());
+			map.put("menuName", menu.getMenuName());
+			map.put("parentId", menu.getParentId());
+			menuMap.put(String.valueOf(menu.getId()), map);
+			result.add(map);
+		}
 		return result;
 	}
 	
@@ -141,7 +214,6 @@ public class GoodsMenuService {
 	public  Map<String,Object> getMenuParent(List<GoodsMenu> ls)
 	{
 		Map<String,Object> result = new HashMap<String, Object>();
-		Map<String,Map<String,Object>> menuMap = new HashMap<String, Map<String,Object>>();
 		List<GoodsMenu> parentLs = new ArrayList<GoodsMenu>();
 		for(GoodsMenu menu : ls)
 		{
@@ -149,28 +221,8 @@ public class GoodsMenuService {
 			if(menu.getParentId()==0)
 			{
 				parentLs.add(menu);
-			}else {
-				//设置所有存在父级菜单的父菜单名称
-				if(menuMap.get(menu.getParentId())!=null)
-				{
-					map.put("parentName", menuMap.get(menu.getParentId()).get("menuame"));
-				}else
-				{
-					for(GoodsMenu godsMenu : ls)
-					{
-						if(godsMenu.getId()==menu.getParentId())
-						{
-							map.put("parentName", godsMenu.getMenuName());
-						}
-					}
-				}
 			}
-			map.put("id", menu.getId());
-			map.put("menuame", menu.getMenuName());
-			map.put("parentId", menu.getParentId());
-			menuMap.put(String.valueOf(menu.getId()), map);
 		}
-		result.put("classified", menuMap);
 		result.put("parentLs", parentLs);
 		return result;
 	}

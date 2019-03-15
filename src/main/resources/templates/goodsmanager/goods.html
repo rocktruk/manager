@@ -47,13 +47,10 @@
                     </div>
                 </li>
                 <li>
-                    <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">商品管理</span> <span class="fa arrow"></span></a>
+                    <a th:href="@{menu}"><i class="fa fa-th-large"></i> <span class="nav-label">商品管理</span> <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
-                        <li><a href="index.html">Dashboard v.1</a></li>
-                        <li><a href="dashboard_2.html">Dashboard v.2</a></li>
-                        <li><a href="dashboard_3.html">Dashboard v.3</a></li>
-                        <li><a href="dashboard_4_1.html">Dashboard v.4</a></li>
-                        <li><a href="dashboard_5.html">Dashboard v.5 <span class="label label-primary pull-right">NEW</span></a></li>
+                        <li><a th:href="@{menu}"> 菜单管理</a></li>
+                        <li><a th:href="@{goods}">商品管理</a></li>
                     </ul>
                 </li>
             </ul>

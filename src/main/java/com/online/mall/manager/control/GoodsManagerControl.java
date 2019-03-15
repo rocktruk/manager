@@ -1,20 +1,13 @@
 package com.online.mall.manager.control;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.aspectj.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 import com.online.mall.manager.common.IConstants;
 import com.online.mall.manager.common.RespConstantsUtil;
@@ -46,22 +38,36 @@ public class GoodsManagerControl {
 	}
 	
 	@RequestMapping("/menu")
-	public String tables(HttpServletRequest request)
+	public String showMenu(HttpServletRequest request)
 	{
-		Map<String,Object> result = service.menuTable();
+		Map<String,Object> result = service.menuParentTable();
 		request.setAttribute("params", result);
-		return "table_data_tables";
+		return "goodsmanager/menu";
 	}
 	
 	
+	@RequestMapping("/goods")
+	public String showGoods(HttpServletRequest request)
+	{
+		Map<String,Object> result = service.menuParentTable();
+		request.setAttribute("params", result);
+		return "goodsmanager/goods";
+	}
+	
+	/**
+	 * 分页查询菜单
+	 * @param request
+	 * @param length
+	 * @param start
+	 * @param draw
+	 * @return
+	 */
 	@RequestMapping("/loadMenuWithPage")
 	@ResponseBody
-	public Map<String,Object> loadMenuWithPage(HttpServletRequest request,@RequestParam(value = "length") String length,
-			@RequestParam(value = "start") String start,
-			@RequestParam(value = "draw") String draw)
+	public Map<String,Object> loadMenuWithPage(HttpServletRequest request,@RequestParam(value = "length") int length,
+			@RequestParam(value = "start") int start)
 	{
-		Map<String,Object> result = new HashMap<String, Object>();
-		
+		Map<String,Object> result = service.getMenuWithPage(length, start);
 		return result;
 	}
 	
