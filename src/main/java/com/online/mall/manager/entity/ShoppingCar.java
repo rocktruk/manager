@@ -28,6 +28,9 @@ public class ShoppingCar {
 	
 	@Column(name="GOODS_ID",columnDefinition="varchar",length=20)
 	private String goodsId;
+	
+	@Column(name="COUNT")
+	private int count;
 
 	public String getId() {
 		return id;
@@ -67,6 +70,14 @@ public class ShoppingCar {
 
 	public void setGoodsId(String goodsId) {
 		this.goodsId = goodsId;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
 	}
 	
 	
