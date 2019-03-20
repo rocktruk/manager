@@ -43,7 +43,7 @@ public class GoodsWithoutDetail {
 	@Column(name="title")
 	private String title;
 	
-	@Column(name="desc")
+	@Column(name="GOODS_DESC")
 	private String desc;
 	
 	@Column(name="MONTH_SALES")
