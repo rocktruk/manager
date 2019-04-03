@@ -1,6 +1,8 @@
 package com.online.mall.manager.control;
 
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +24,9 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.online.mall.manager.common.IConstants;
 import com.online.mall.manager.common.RespConstantsUtil;
 import com.online.mall.manager.entity.GoodsMenu;
+import com.online.mall.manager.entity.GoodsWithoutDetail;
 import com.online.mall.manager.service.GoodsMenuService;
+import com.online.mall.manager.service.GoodsService;
 
 @Controller
 public class GoodsManagerControl {
@@ -30,6 +36,9 @@ public class GoodsManagerControl {
 	
 	@Autowired
 	private GoodsMenuService service;
+	
+	
+	private GoodsService goodsService;
 	
 	@RequestMapping("/index")
 	public String index()
@@ -49,10 +58,19 @@ public class GoodsManagerControl {
 	@RequestMapping("/goods")
 	public String showGoods(HttpServletRequest request)
 	{
-		Map<String,Object> result = service.menuParentTable();
-		request.setAttribute("params", result);
 		return "goodsmanager/goods";
 	}
+	
+	
+	
+	public Map<String,Object> loadGoodsWithPage(HttpServletRequest request,@RequestParam(value = "length") int length,
+			@RequestParam(value = "start") int start){
+		Map<String,Object> result = new HashMap<String, Object>();
+		Sort sort = new Sort(Direction.DESC, "createTime");
+		goodsService.findAllGoodsWithMenuAndPage(null, sort, 0, 10);
+		return result;
+	}
+	
 	
 	/**
 	 * 分页查询菜单

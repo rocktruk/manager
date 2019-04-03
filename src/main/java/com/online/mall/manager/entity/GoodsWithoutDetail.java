@@ -1,6 +1,7 @@
 package com.online.mall.manager.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -8,7 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 @Table(name="GOODS")
@@ -52,6 +55,8 @@ public class GoodsWithoutDetail {
 	@Column(name="TOTAL_SALES")
 	private long totalSales;
 	
+	@Column(name="CREATE_TIME",columnDefinition="timestamp")
+	private Date createTime;
 	
 	@Column(name="BANNER_IMAGES")
 	private String banerImages;
@@ -62,6 +67,17 @@ public class GoodsWithoutDetail {
 	@Column(name="ORI_PRICE")
 	private BigDecimal oriPrice;
 	
+	@ManyToOne
+	private GoodsMenu menu;
+	
+	public GoodsMenu getMenu() {
+		return menu;
+	}
+
+	public void setMenu(GoodsMenu menu) {
+		this.menu = menu;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -181,6 +197,14 @@ public class GoodsWithoutDetail {
 
 	public void setOriPrice(BigDecimal oriPrice) {
 		this.oriPrice = oriPrice;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 
 	

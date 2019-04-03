@@ -1,6 +1,7 @@
 package com.online.mall.manager.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -8,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -68,9 +70,23 @@ public class Goods {
 	@Column(name="ORI_PRICE")
 	private BigDecimal oriPrice;
 	
+	@Column(name="CREATE_TIME",columnDefinition="timestamp")
+	private Date createTime;
+	
 	@Transient
 	private String banners;
 	
+	@ManyToOne
+	private GoodsMenu menu;
+	
+	public GoodsMenu getMenu() {
+		return menu;
+	}
+
+	public void setMenu(GoodsMenu menu) {
+		this.menu = menu;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -206,6 +222,14 @@ public class Goods {
 
 	public void setDesc(String desc) {
 		this.desc = desc;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 	
 	

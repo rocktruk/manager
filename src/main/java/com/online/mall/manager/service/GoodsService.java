@@ -1,6 +1,7 @@
 package com.online.mall.manager.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -37,18 +38,19 @@ public class GoodsService {
 		return ls;
 	}
 	
+	
 	/**
-	 * 
-	 * @param menuId 商品菜单id
-	 * @param sort 排序
-	 * @param index 从0开始的页面索引
-	 * @param num 每次查询的记录数
+	 * 关联查询商品信息
+	 * @param goods
+	 * @param sort
+	 * @param index
+	 * @param num
 	 * @return
 	 */
-	public List<GoodsWithoutDetail> findGoodsByMenuWithSort(int menuId,Sort sort,int index,int num)
-	{
-		GoodsWithoutDetail goods = new GoodsWithoutDetail();
-		goods.setGoodsMenuId(menuId);
+	public List<GoodsWithoutDetail> findAllGoodsWithMenuAndPage(GoodsWithoutDetail goods,Sort sort,int index,int num){
+		if(goods != null) {
+			goods = new GoodsWithoutDetail();
+		}
 		ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("inventory","totalSales","monthSales","carriage");
 		Example<GoodsWithoutDetail> example = Example.of(goods,matcher);
 		PageRequest page = null;
@@ -59,31 +61,19 @@ public class GoodsService {
 		{
 			page = PageRequest.of(index, num, sort);
 		}
-		return noDetailRepos.findAll(example,page).getContent();
+		List<GoodsWithoutDetail> goodsls = noDetailRepos.findAll(example,page).getContent();
+		return goodsls;
 	}
+	
 	
 	
 	@Transactional
-	public boolean insertGoods(Goods goods)
+	public void insertGoods(Goods goods)
 	{
-		int n = goodRepository.insertGoods(goods.getId(), goods.getPrice(), goods.getBrand(), goods.getDetail(), goods.getInventory(), goods.getStatus(), goods.getImgPath(), goods.getGoodsMenuId(), goods.getSpecification(), goods.getTitle(), goods.getMonthSales(), goods.getTotalSales());
-		if(n == 1) {
-			return true;
-		}else
-		{
-			return false;
-		}
+		goodRepository.save(goods);
 	}
 	
-	/**
-	 * 根据商品ID查询商品信息
-	 * @param goodsId
-	 * @return
-	 */
-	public Optional<Goods> getProduct(String goodsId)
-	{
-		return goodRepository.findById(goodsId);
-	}
+	
 	
 	
 	
