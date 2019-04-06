@@ -8,8 +8,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -43,9 +45,6 @@ public class Goods {
 	@Column(name="IMG_PATH")
 	private String imgPath;
 	
-	@Column(name="GOODS_MENU_ID")
-	private int goodsMenuId;
-	
 	@Column(name="SPECIFICATION")
 	private String specification;
 
@@ -76,7 +75,8 @@ public class Goods {
 	@Transient
 	private String banners;
 	
-	@ManyToOne
+	@OneToOne
+	@JoinColumn(name="GOODS_MENU_ID")
 	private GoodsMenu menu;
 	
 	public GoodsMenu getMenu() {
@@ -142,14 +142,6 @@ public class Goods {
 
 	public void setImgPath(String imgPath) {
 		this.imgPath = imgPath;
-	}
-
-	public int getGoodsMenuId() {
-		return goodsMenuId;
-	}
-
-	public void setGoodsMenuId(int goodsMenuId) {
-		this.goodsMenuId = goodsMenuId;
 	}
 
 	public String getSpecification() {
