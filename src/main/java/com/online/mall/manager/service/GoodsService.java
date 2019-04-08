@@ -33,12 +33,6 @@ public class GoodsService {
 	private GoodsWithoutDetailRepository noDetailRepos;
 	
 	
-	public List<GoodsWithoutDetail> findGoodsByMenu(int menuId)
-	{
-		List<GoodsWithoutDetail> ls = noDetailRepos.selectGoodsByGoodsMenuId(menuId);
-		return ls;
-	}
-	
 	/**
 	 * datatable分页查询
 	 * @param goods
