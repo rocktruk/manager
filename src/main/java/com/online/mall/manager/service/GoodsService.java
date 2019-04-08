@@ -1,5 +1,6 @@
 package com.online.mall.manager.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +39,24 @@ public class GoodsService {
 		return ls;
 	}
 	
+	/**
+	 * datatable分页查询
+	 * @param goods
+	 * @param sort
+	 * @param index
+	 * @param num
+	 * @return
+	 */
+	public Map<String,Object> searchGoodsForDataTable(GoodsWithoutDetail goods,Sort sort,int index,int num){
+		Map<String,Object> map = new HashMap<String, Object>();
+		List<GoodsWithoutDetail> ls = findAllGoodsWithMenuAndPage(goods, sort, index, num);
+		long total = noDetailRepos.count();
+		map.put("recordsTotal", total);
+		map.put("recordsFiltered", total);
+		map.put("draw", index+1);
+		map.put("data", ls);
+		return map;
+	}
 	
 	/**
 	 * 关联查询商品信息

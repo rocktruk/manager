@@ -284,7 +284,7 @@
             		 //ajax请求数据
             		 $.ajax({
             		     type: "POST",
-            		     url: "/longxin/loadMenuWithPage",
+            		     url: "loadMenuWithPage",
             		     cache: false,  //禁用缓存
             		     data: param,
             		     dataType: "json",
@@ -331,7 +331,7 @@
 
                 language: 'zh', //设置语言
 
-                uploadUrl:"/longxin/upload", //上传的地址
+                uploadUrl:"upload", //上传的地址
     			
                 allowedFileTypes : [ 'image' ],//允许上传的文件类型
                 
@@ -426,7 +426,7 @@
     			   };
     	   $.ajax({
     		data: JSON.stringify(data),
-       		url:  "/longxin/addMenu",
+       		url:  "addMenu",
        		type: "POST",
        		contentType:"application/json",
        		success:function(data){

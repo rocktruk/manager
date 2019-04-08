@@ -62,12 +62,17 @@ public class GoodsManagerControl {
 	}
 	
 	
-	
+	@RequestMapping("/goodsLoad")
+	@ResponseBody
 	public Map<String,Object> loadGoodsWithPage(HttpServletRequest request,@RequestParam(value = "length") int length,
 			@RequestParam(value = "start") int start){
 		Map<String,Object> result = new HashMap<String, Object>();
 		Sort sort = new Sort(Direction.DESC, "createTime");
-		goodsService.findAllGoodsWithMenuAndPage(null, sort, 0, 10);
+		if(length == 0) {
+			length = 10;
+		}
+		result = goodsService.searchGoodsForDataTable(null, sort, start, length) ;
+		
 		return result;
 	}
 	

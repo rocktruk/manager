@@ -167,7 +167,7 @@
             <table class="table table-striped table-bordered table-hover " id="editable" >
             <thead>
             <tr>
-                <th></th>
+                <th style="text-align: center"></th>
                 <th>商品名称</th>
                 <th>商品描述</th>
                 <th>商品规格</th>
@@ -295,7 +295,7 @@
             		 //ajax请求数据
             		 $.ajax({
             		     type: "POST",
-            		     url: "/mall/loadMenuWithPage",
+            		     url: "goodsLoad",
             		     cache: false,  //禁用缓存
             		     data: param,
             		     dataType: "json",
@@ -334,7 +334,7 @@
 
                 language: 'zh', //设置语言
 
-                uploadUrl:"/mall/upload", //上传的地址
+                uploadUrl:"upload", //上传的地址
     			
                 allowedFileTypes : [ 'image' ],//允许上传的文件类型
                 
@@ -429,7 +429,7 @@
     			   };
     	   $.ajax({
     		data: JSON.stringify(data),
-       		url:  "/mall/addMenu",
+       		url:  "addMenu",
        		type: "POST",
        		contentType:"application/json",
        		success:function(data){

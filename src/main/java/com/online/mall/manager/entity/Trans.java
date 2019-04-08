@@ -5,12 +5,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Table(name="TRANS")
 @Entity
 public class Trans {
 
+	@Id
 	@Column(name="TRACE_NO")
 	private String traceNo;
 	
