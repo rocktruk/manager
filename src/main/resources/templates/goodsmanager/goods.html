@@ -102,33 +102,73 @@
         </nav>
         </div>
         
-        <div class="modal fade" id="addMenu" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addGoods" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
 		    <div class="modal-dialog">
 		        <div class="modal-content">
 		            <div class="modal-header">
 		                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		                <h4 class="modal-title" id="myModalLabel">新增商品分类</h4>
+		                <h4 class="modal-title" id="myModalLabel">新增商品</h4>
 		            </div>
 		            <form id="addForm">
 		            <div class="modal-body">
 		            	<div class="row">
 		            		<div class="form-group">
-			            		<label class="control-label">分类名称：</label>
-			            		<input type="text" name="menuName" id="menuName" class="form-control" />
+			            		<label class="control-label">商品名称：</label>
+			            		<input type="text" name="title" id="title" class="form-control" />
 		            		</div>
 		            	</div>
 		            	<div class="row">
 		            		<div class="form-group">
-			            		<label class="control-label">父级分类：</label>
+			            		<label class="control-label">品牌：</label>
+			            		<input type="text" name="brand" id="brand" class="form-control" />
+		            		</div>
+		            	</div>
+	            		<div class="row">
+		            		<div class="form-group">
+			            		<label class="control-label">原价格：</label>
+			            		<input type="text" name="oriPrice" id="oriPrice" class="form-control" />
+		            		</div>
+		            	</div>
+		            	<div class="row">
+		            		<div class="form-group">
+			            		<label class="control-label">价格：</label>
+			            		<input type="text" name="price" id="price" class="form-control" />
+		            		</div>
+		            		<div class="form-group">
+			            		<label class="control-label">邮费：</label>
+			            		<input type="text" name="carriage" id="carriage" class="form-control" />
+		            		</div>
+		            	</div>
+		            	<div class="row">
+		            		<div class="form-group">
+			            		<label class="control-label">商品规格：</label>
+			            		<input type="textArea" name="specification" id="specification" class="form-control" />
+		            		</div>
+		            	</div>
+		            	<div class="row">
+		            		<div class="form-group">
+			            		<label class="control-label">商品描述：</label>
+			            		<input type="text" name="goodsDesc" id="goodsDesc" class="form-control" />
+		            		</div>
+		            	</div>
+		            	<div class="row">
+		            		<div class="form-group">
+			            		<label class="control-label">分类：</label>
 			            		<select name="parent" id="parent" class="form-control">
-			            		 	<option value="0" selected="selected" >选择父级分类...</option>
+			            		 	<option value="0" selected="selected" >选择分类...</option>
                                     <option th:each="parentMenu:${params.parentLs}" th:value="${parentMenu.id}" th:text="${parentMenu.menuName}"></option>
                                 </select>
 			            	</div>
 		            	</div>
 		            	<div class="row">
 		            		<div class="form-group">
-			            		<label class="control-label">分类图标：</label>
+			            		<label class="control-label">商品图片：</label>
+			            		<input type="file" name="goodsimg" id="goodsimg" class="file-loading form-control" />
+			            	</div>
+		            	</div>
+		            	<div class="row">
+		            		<div class="form-group">
+			            		<label class="control-label">轮播图片：</label>
 			            		<input type="file" name="uploadfile" id="uploadfile" class="file-loading form-control" />
 			            	</div>
 		            	</div>
@@ -153,7 +193,7 @@
                     <a class="collapse-link">
                         <i class="fa fa-chevron-up"></i>
                     </a>
-\                    <a class="close-link">
+                    <a class="close-link">
                         <i class="fa fa-times"></i>
                     </a>
                 </div>
@@ -169,12 +209,12 @@
             <tr>
                 <th style="text-align: center"></th>
                 <th>商品名称</th>
-                <th>商品描述</th>
-                <th>商品规格</th>
                 <th>品牌</th>
                 <th>价格</th>
                 <th>运费</th>
                 <th>原价格</th>
+                <th>商品描述</th>
+                <th>商品规格</th>
                 <th>分类</th>
                 <th>状态</th>
                 <th style="display:none">menuId</th>
@@ -323,9 +363,15 @@
                          }
 
             		 },
-            		 {"data":"menuName"},
-            		 {"data":"parentName"},
-            		 {"data":"parentId"}
+            		 {"data":"title"},
+            		 {"data":"brand"},
+            		 {"data":"price"},
+            		 {"data":"carriage"},
+            		 {"data":"oriPrice"},
+            		 {"data":"desc"},
+            		 {"data":"specification"},
+            		 {"data":"menu.menuName"},
+            		 {"data":"menu.id"}
             	 ]
             	
             });
