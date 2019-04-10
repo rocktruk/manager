@@ -207,11 +207,11 @@ public class GoodsManagerControl {
 		String id = request.getParameter("id");
 		String type = request.getParameter("type");
 		MultiValueMap<String, MultipartFile> map = request.getMultiFileMap();
-		MultipartFile img;
+		List<MultipartFile> img;
 		if(ConfigConstants.GOODS_IMG.equals(type)) {
-			img = ((MultipartFile)map.get("goodsimg").get(0));
+			img = map.get("goodsimg");
 		}else {
-			img = ((MultipartFile)map.get("uploadfile").get(0));
+			img = map.get("uploadfile");
 		}
 		Map<String,Object> result = goodsService.writeGoodsUploadFile(img, id, type);
 		return result;

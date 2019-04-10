@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,15 +93,18 @@ public class GoodsService extends AbstractMallService{
 	 * @return
 	 */
 	@Transactional
-	public Map<String,Object> writeGoodsUploadFile(MultipartFile img,String id,String type){
+	public Map<String,Object> writeGoodsUploadFile(List<MultipartFile> imgs,String id,String type){
 		Map<String,Object> result = new HashMap<String, Object>();
 		try {
-			String src = writeFile(img,id+File.separator+type);
+			StringJoiner imgpath = new StringJoiner(",");
+			for(MultipartFile img : imgs) {
+				imgpath.add(writeFile(img,id+File.separator+type));
+			}
 			//更新商品图片
 			if(ConfigConstants.GOODS_IMG.equals(type)) {
-				goodRepository.updateGoodsImgWithId(id, src);
+				goodRepository.updateGoodsImgWithId(id, imgpath.toString());
 			}else {
-				goodRepository.updateGoodsBannersWithId(id, src);
+				goodRepository.updateGoodsBannersWithId(id, imgpath.toString());
 			}
 			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
 			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));

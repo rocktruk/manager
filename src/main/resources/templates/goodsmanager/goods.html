@@ -292,7 +292,7 @@
     <script th:src="@{js/inspinia.js}"></script>
     <script th:src="@{js/plugins/pace/pace.min.js}"></script>
     <script th:src="@{js/plugins/fileinput/sortable.min.js}" type="text/javascript"></script>
-    <script th:src="@{js/fileinput.min.js}" type="text/javascript"></script>
+    <script th:src="@{js/fileinput.js}" type="text/javascript"></script>
     <script th:src="@{js/zh.js}" type="text/javascript"></script>
     <script th:src="@{js/bootstrapValidator.min.js}" type="text/javascript"></script>
     <script th:src="@{js/bootstrapValidator.min.extend.js}" type="text/javascript"></script>
@@ -417,7 +417,7 @@
                 allowedFileTypes : [ 'image' ],//允许上传的文件类型
                allowedFileExtensions: ['jpg', 'jpeg', 'png','ico'],//接收的文件后缀
                //uploadExtraData:{"id": 1, "fileName":'123.mp3'},
-                uploadAsync: true, //默认异步上传
+                uploadAsync: false, //默认异步上传
                 showUpload:false, //是否显示上传按钮
                 showRemove :true, //显示移除按钮
                 showPreview :false, //是否显示预览
@@ -430,7 +430,8 @@
                //maxImageHeight: 1000,//图片的最大高度
                 //maxFileSize:0,//单位为kb，如果为0表示不限制文件大小
                //minFileCount: 0,
-                //maxFileCount:n, //表示允许同时上传的最大文件个数
+                maxFileCount:10, //表示允许同时上传的最大文件个数
+                overwriteInitial: false,
                 enctype:'multipart/form-data',
                validateInitialCount:true,
                 previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
