@@ -18,4 +18,8 @@ public interface IConstants {
 	String RESPCODE_MENU_EXIST = "respcode.menu.exist";
 	
 	String RESPMSG_MENU_EXIST = "respmsg.menu.exist";
+	
+	String RESPCODE_COLS_VALIDFAIL = "respcode.cols.validfail";
+	
+	String RESPMSG_COLS_VALIDFAIL = "respmsg.cols.validfail";
 }

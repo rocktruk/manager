@@ -1,21 +1,15 @@
 package com.online.mall.manager.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.aspectj.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
@@ -30,10 +24,8 @@ import com.online.mall.manager.repository.GoodsMenuRepository;
 
 
 @Service
-public class GoodsMenuService {
+public class GoodsMenuService extends AbstractMallService{
 
-	@Value(value="${file.uploadFolder}")
-	private String uploadPath;
 	
 	@Autowired
 	private GoodsMenuRepository goodsMenu;
@@ -170,22 +162,8 @@ public class GoodsMenuService {
 	public Map<String,Object> writeUploadFile(MultipartFile img,String id)
 	{
 		Map<String,Object> result = new HashMap<String, Object>();
-		InputStream input=null;
-		OutputStream out=null;
 		try {
-			input = img.getInputStream();
-			String src = id+File.separator+img.getOriginalFilename();
-			File f = new File(uploadPath+src);
-			File dir = new File(uploadPath+id);
-			if(!dir.exists())
-			{
-				dir.mkdir();
-			}
-			if(f.createNewFile())
-			{
-				out = new FileOutputStream(f);
-				FileUtil.copyStream(input, out);
-			}
+			String src = writeFile(img,id);
 			//更新菜单图片
 			updateMenuIcon(Integer.parseInt(id),src);
 			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
@@ -194,17 +172,11 @@ public class GoodsMenuService {
 			log.error(e.getMessage(),e);
 			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));
 			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SYSERR));
-		}finally {
-			try {
-				out.flush();
-				input.close();
-				out.close();
-			} catch (IOException e) {
-				log.error(e.getMessage(),e);
-			}
 		}
 		return result;
 	}
+	
+	
 	
 	/**
 	 * 获取所有一级菜单的ID集合,级所有菜单

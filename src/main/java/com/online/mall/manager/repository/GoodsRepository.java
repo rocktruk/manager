@@ -17,4 +17,14 @@ public interface GoodsRepository extends IExpandJpaRepository<Goods, String> {
 	@Query(value="insert into goods value (?,?,?,?,?,?,?,?,?,?,?,?)",nativeQuery=true)
 	int insertGoods(String id,BigDecimal price,String brand,byte[] detail,long inventory,String status,String imgPath,int goodsMenuId,String specification,String title,long monthSales,long totalSales);
 	
+	@Modifying
+	@Transactional
+	@Query("update Goods g set g.imgPath = ?2 where g.id = ?1")
+	int updateGoodsImgWithId(String id,String imgPath);
+	
+	
+	@Modifying
+	@Transactional
+	@Query("update Goods g set g.banerImages = ?2 where g.id = ?1")
+	int updateGoodsBannersWithId(String id,String imgPath);
 }

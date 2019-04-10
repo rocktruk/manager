@@ -1,9 +1,10 @@
 package com.online.mall.manager.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,14 +15,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.online.mall.manager.common.ConfigConstants;
+import com.online.mall.manager.common.IConstants;
+import com.online.mall.manager.common.RespConstantsUtil;
 import com.online.mall.manager.entity.Goods;
 import com.online.mall.manager.entity.GoodsWithoutDetail;
 import com.online.mall.manager.repository.GoodsRepository;
 import com.online.mall.manager.repository.GoodsWithoutDetailRepository;
 
 @Service
-public class GoodsService {
+public class GoodsService extends AbstractMallService{
 	
 	
 	private static final Logger log = LoggerFactory.getLogger(GoodsService.class);
@@ -61,7 +66,7 @@ public class GoodsService {
 	 * @return
 	 */
 	public List<GoodsWithoutDetail> findAllGoodsWithMenuAndPage(GoodsWithoutDetail goods,Sort sort,int index,int num){
-		if(goods != null) {
+		if(goods == null) {
 			goods = new GoodsWithoutDetail();
 		}
 		ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("inventory","totalSales","monthSales","carriage");
@@ -79,9 +84,37 @@ public class GoodsService {
 	}
 	
 	
+	/**
+	 * 商品图片上传，写入磁盘，并保存路径到数据库
+	 * @param img
+	 * @param id
+	 * @param type 图片类型 goodsimg-商品图片，bannerImg-轮播图
+	 * @return
+	 */
+	@Transactional
+	public Map<String,Object> writeGoodsUploadFile(MultipartFile img,String id,String type){
+		Map<String,Object> result = new HashMap<String, Object>();
+		try {
+			String src = writeFile(img,id+File.separator+type);
+			//更新商品图片
+			if(ConfigConstants.GOODS_IMG.equals(type)) {
+				goodRepository.updateGoodsImgWithId(id, src);
+			}else {
+				goodRepository.updateGoodsBannersWithId(id, src);
+			}
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
+		} catch (IOException e) {
+			log.error(e.getMessage(),e);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SYSERR));
+		}
+		return result;
+	}
+	
 	
 	@Transactional
-	public void insertGoods(Goods goods)
+	public void saveGoods(Goods goods)
 	{
 		goodRepository.save(goods);
 	}

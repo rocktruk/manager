@@ -17,6 +17,7 @@
     <link th:href="@{css/plugins/dropzone/dropzone.css}" rel="stylesheet">
     <link th:href="@{css/animate.css}" rel="stylesheet">
     <link th:href="@{css/style.css}" rel="stylesheet">
+    <link th:href="@{css/circle.css}" rel="stylesheet">
     <link th:href="@{css/bootstrapValidator.min.css}" rel="stylesheet">
 </head>
 
@@ -123,26 +124,40 @@
 			            		<input type="text" name="brand" id="brand" class="form-control" />
 		            		</div>
 		            	</div>
-	            		<div class="row">
-		            		<div class="form-group">
-			            		<label class="control-label">原价格：</label>
-			            		<input type="text" name="oriPrice" id="oriPrice" class="form-control" />
-		            		</div>
-		            	</div>
 		            	<div class="row">
-		            		<div class="form-group">
-			            		<label class="control-label">价格：</label>
-			            		<input type="text" name="price" id="price" class="form-control" />
+		            		<div class="form-group col-sm-5">
+		            			<div class="row">
+				            		<label class="control-label">价格：</label>
+				            		<input type="text" name="price" id="price" class="form-control"/>
+		            			</div>
 		            		</div>
-		            		<div class="form-group">
-			            		<label class="control-label">邮费：</label>
-			            		<input type="text" name="carriage" id="carriage" class="form-control" />
+		            		<div class="form-group col-sm-2"></div>
+		            		<div class="form-group col-sm-5">
+		            			<div class="row ">
+				            		<label class="control-label">原价格：</label>
+				            		<input type="text" name="oriPrice" id="oriPrice" class="form-control" value="0.00" />
+		            			</div>
 		            		</div>
 		            	</div>
 		            	<div class="row">
 		            		<div class="form-group">
 			            		<label class="control-label">商品规格：</label>
-			            		<input type="textArea" name="specification" id="specification" class="form-control" />
+			            		<textarea rows="3" name="specification" style="resize: none" id="specification" class="form-control"></textarea>
+		            		</div>
+		            	</div>
+		            	<div class="row">
+		            		<div class="form-group col-sm-5">
+		            			<div class="row">
+				            		<label class="control-label">邮费：</label>
+				            		<input type="text" name="carriage" id="carriage" class="form-control"/>
+		            			</div>
+		            		</div>
+		            		<div class="form-group col-sm-2"></div>
+		            		<div class="form-group col-sm-5">
+		            			<div class="row">
+				            		<label class="control-label">库存：</label>
+				            		<input type="text" name="inventory" id="inventory" class="form-control" value="0"/>
+		            			</div>
 		            		</div>
 		            	</div>
 		            	<div class="row">
@@ -154,9 +169,9 @@
 		            	<div class="row">
 		            		<div class="form-group">
 			            		<label class="control-label">分类：</label>
-			            		<select name="parent" id="parent" class="form-control">
+			            		<select name="menuId" id="menuId" class="form-control">
 			            		 	<option value="0" selected="selected" >选择分类...</option>
-                                    <option th:each="parentMenu:${params.parentLs}" th:value="${parentMenu.id}" th:text="${parentMenu.menuName}"></option>
+                                    <option th:each="menu:${menus}" th:value="${menu.id}" th:text="${menu.menuName}"></option>
                                 </select>
 			            	</div>
 		            	</div>
@@ -169,14 +184,14 @@
 		            	<div class="row">
 		            		<div class="form-group">
 			            		<label class="control-label">轮播图片：</label>
-			            		<input type="file" name="uploadfile" id="uploadfile" class="file-loading form-control" />
+			            		<input type="file" name="uploadfile" id="uploadfile" multiple class="file-loading form-control" />
 			            	</div>
 		            	</div>
 		            </div>
 		            </form>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-		                <button type="button" onclick="addClassified()" class="btn btn-primary">提交</button>
+		                <button type="button" id="submitbtn" onclick="addGoods()" class="btn btn-primary">提交</button>
 		            </div>
 		        </div><!-- /.modal-content -->
 		    </div><!-- /.modal -->
@@ -200,7 +215,7 @@
             </div>
             <div class="ibox-content">
 	            <div class="">
-		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addMenu" class="btn btn-primary ">新增</a>
+		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addGoods" class="btn btn-primary ">新增</a>
 		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addMenu" class="btn btn-warning ">修改</a>
 		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addMenu" class="btn btn-danger ">删除</a>
 	            </div>
@@ -246,13 +261,27 @@
 
         </div>
         </div>
-
-
+        <!-- 等待动图 -->
+		<div class="sk-circle" style="display: none;float:left;left:50%">
+			        <div class="sk-circle1 sk-child"></div>
+			        <div class="sk-circle2 sk-child"></div>
+			        <div class="sk-circle3 sk-child"></div>
+			        <div class="sk-circle4 sk-child"></div>
+			        <div class="sk-circle5 sk-child"></div>
+			        <div class="sk-circle6 sk-child"></div>
+			        <div class="sk-circle7 sk-child"></div>
+			        <div class="sk-circle8 sk-child"></div>
+			        <div class="sk-circle9 sk-child"></div>
+			        <div class="sk-circle10 sk-child"></div>
+			        <div class="sk-circle11 sk-child"></div>
+			        <div class="sk-circle12 sk-child"></div>
+		 </div>
+		 <!-- 遮罩 -->
+		<div class="overlay" style="display: none"></div>
 
     <!-- Mainly scripts -->
     <script th:src="@{js/jquery-2.1.1.js}"></script>
     <script th:src="@{js/bootstrap.min.js}"></script>
-    <script th:src="@{js/themes/gly/theme.min.js}"></script>
     <script th:src="@{js/plugins/metisMenu/jquery.metisMenu.js}"></script>
     <script th:src="@{js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
     <script th:src="@{js/plugins/jeditable/jquery.jeditable.js}"></script>
@@ -266,6 +295,7 @@
     <script th:src="@{js/fileinput.min.js}" type="text/javascript"></script>
     <script th:src="@{js/zh.js}" type="text/javascript"></script>
     <script th:src="@{js/bootstrapValidator.min.js}" type="text/javascript"></script>
+    <script th:src="@{js/bootstrapValidator.min.extend.js}" type="text/javascript"></script>
     <script th:src="@{css/themes/explorer-fa/theme.min.js}"type="text/javascript"></script>
     <script th:src="@{css/themes/fa/theme.min.js}"type="text/javascript"></script>
 <!-- 	<script th:src="@{js/plugins/dropzone/dropzone.js}"></script> -->
@@ -273,6 +303,8 @@
     <script>
         $(document).ready(function(){
 			validatorInit();
+			fileinputInit("goodsimg");
+			fileinputInit("uploadfile");
             lang = {
             	    "sProcessing": "处理中...",
             	    "sLengthMenu": "每页 _MENU_ 项",
@@ -342,13 +374,13 @@
             		     success: function (result) {
             		         //封装返回数据
             		         var returnData = {};
-            		         returnData.draw = result.data.draw;//这里直接自行返回了draw计数器,应该由后台返回
-            		         returnData.recordsTotal = result.data.recordsTotal;//返回数据全部记录
-            		         returnData.recordsFiltered = result.data.recordsFiltered;//后台不实现过滤功能，每次查询均视作全部结果
-            		         returnData.data = result.data.data;//返回的数据列表
+            		         returnData.draw = result.draw;//这里直接自行返回了draw计数器,应该由后台返回
+            		         returnData.recordsTotal = result.recordsTotal;//返回数据全部记录
+            		         returnData.recordsFiltered = result.recordsFiltered;//后台不实现过滤功能，每次查询均视作全部结果
+            		         returnData.data = result.data;//返回的数据列表
             		         //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
             		         //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
-//             		         callback(returnData);
+             		         callback(returnData);
             		     },
             		     error: function(msg){
             		    	 console.log(msg);
@@ -375,60 +407,40 @@
             	 ]
             	
             });
-            
-            $("#uploadfile").fileinput({
+        });
 
+		
+		function fileinputInit(id){
+            	$("#"+id).fileinput({
                 language: 'zh', //设置语言
-
-                uploadUrl:"upload", //上传的地址
-    			
+                uploadUrl:"goodsImgUp", //上传的地址
                 allowedFileTypes : [ 'image' ],//允许上传的文件类型
-                
                allowedFileExtensions: ['jpg', 'jpeg', 'png','ico'],//接收的文件后缀
-
                //uploadExtraData:{"id": 1, "fileName":'123.mp3'},
-
                 uploadAsync: true, //默认异步上传
-
                 showUpload:false, //是否显示上传按钮
-
                 showRemove :true, //显示移除按钮
-
                 showPreview :false, //是否显示预览
-
                 showCaption:true,//是否显示标题
-
                 browseClass:"btn btn-primary", //按钮样式    
-
                dropZoneEnabled: true,//是否显示拖拽区域
-
                //minImageWidth: 50, //图片的最小宽度
-
                //minImageHeight: 50,//图片的最小高度
-
                //maxImageWidth: 1000,//图片的最大宽度
-
                //maxImageHeight: 1000,//图片的最大高度
-
                 //maxFileSize:0,//单位为kb，如果为0表示不限制文件大小
-
                //minFileCount: 0,
-
-                maxFileCount:1, //表示允许同时上传的最大文件个数
-
+                //maxFileCount:n, //表示允许同时上传的最大文件个数
                 enctype:'multipart/form-data',
-
                validateInitialCount:true,
-
                 previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
-
                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
                initialCaption: "选择图片"
-           }).on('fileerror', function(event, data, msg) { //一个文件上传失败
-    			console.log('文件上传失败！'+msg);
-    		});
-            
-        });
+	           }).on('fileerror', function(event, data, msg) { //一个文件上传失败
+	    			console.log('文件上传失败！'+msg);
+	    		});
+            }
+
 
         
        function validatorInit(){
@@ -439,17 +451,119 @@
        				validating:'glyphicon glyphicon-refresh',
        			},
        			fields:{
-       				menuName:{
+       				title:{
        					validators:{
        						notEmpty:{
-       							message:"菜单名称不可以为空"
+       							message:"商品名称不可以为空"
+       						},
+       						stringLength:{
+       							min:1,
+       							max:25,
+       							message:"商品名称长度不能少于1位，不能长于25位"
        						}
        					}
+       				},
+       				brand:{
+       					validators:{
+       						notEmpty:{
+       							message:"品牌不可以为空"
+       						},
+       						stringLength:{
+       							min:1,
+       							max:20,
+       							message:"品牌长度不能少于1位，不能长于20位"
+       						}
+       					}
+       				},
+       				price:{
+       					validators:{
+       						notEmpty:{
+       							message:"价格不可以为空"
+       						},
+       						regexp:{
+       							regexp: /(^[1-9][0-9]{0,9}(\.[0-9]{1,2}){0,1}$)|(^0$)|(^\d\.\d{1,2}$)/,
+       							message:"价格以元为单位，整数部分最多10位，小数部分1～2位"
+       						},
+       						numCompare:{
+       							min:0.01,
+       							message:"价格最小值必须大于0"
+       						}
+       					}
+       				},
+       				oriPrice:{
+       					validators:{
+       						regexp:{
+       							regexp: /(^[1-9][0-9]{0,9}(\.[0-9]{1,2}){0,1}$)|(^0$)|(^\d\.\d{1,2}$)/,
+       							message:"原价格以元为单位，整数部分最多10位，小数部分1～2位"
+       						}
+       					//	callback : {
+						//		callback : function(value, validator) {
+						//			validator.updateStatus('accountnoConfirm', 'identical').validateField('accountnoConfirm');
+						//			return true;
+						//		}
+						//	}
+       					}
+       				},
+       				carriage:{
+       					validators:{
+       						regexp:{
+       							regexp: /(^[1-9][0-9]{0,4}$)|(^0{1})$/,
+       							message:"邮费以元为单位，只能为整数，长度最多5位"
+       						}
+       					}
+       				},
+       				inventory:{
+       					validators:{
+       						regexp:{
+       							regexp: /(^[1-9][0-9]{0,10}$)/,
+       							message:"库存为整数，最多10位"
+       						},
+       						numCompare:{
+       							min:1,
+       							message:"库存必须大于0"
+       						}
+       					}
+       				},
+       				specification:{
+       					validators:{
+       						notEmpty:{
+       							message:"商品规格不可以为空"
+       						},
+       						stringLength:{
+       							min:1,
+       							max:200,
+       							message:"商品规格长度不能少于1位，不能长于200位"
+       						}
+       					}
+       				},
+       				goodsDesc:{
+       					validators:{
+       						notEmpty:{
+       							message:"商品描述不可以为空"
+       						},
+       						stringLength:{
+       							min:1,
+       							max:40,
+       							message:"商品描述长度不能少于1位，不能长于200位"
+       						}
+       					}
+       				},
+       				goodsimg:{
+       					validators:{
+       						notEmpty: {
+                        		message: '商品图片不能为空'
+		                    },
+		                    file: {
+		                        extension: 'png,jpg,jpeg,ico',
+		                        type: 'image/png,image/jpg,image/jpeg,image/ico',
+		                        message: '请重新选择图片'
+		                    }
+       					}	
        				},
        				uploadfile:{
        					validators:{
        						notEmpty: {
-                        		message: '上传图片不能为空'
+                        		message: '轮播图片不能为空'
 		                    },
 		                    file: {
 		                        extension: 'png,jpg,jpeg,ico',
@@ -462,37 +576,76 @@
        		});
        }
 
-		//菜单新增
-       function addClassified()
+		//商品新增
+       function addGoods()
        {
+       //禁用按钮
+       		$('#submitbtn').attr('disable',false);
+       		//验证表单
        		var validator = $('#addForm').data("bootstrapValidator");
        		if(!validator.isValid()){
+       			$('#submitbtn').attr('disable',true);
        			return;
        		}
+       		//取值
     	   var data = {
-    			   "menuName":$('#menuName').val(),
-    			   "parent":$('#parent').val()
-    			   };
+    	   			"title":$('#title').val(),
+    			   "price":$('#price').val(),
+    			   "brand":$('#brand').val(),
+    			   "oriPrice":$('#oriPrice').val(),
+    			   "carriage":$('#carriage').val(),
+    			   "specification":$('#specification').val(),
+    			   "goodsDesc":$('#goodsDesc').val(),
+    			   "menuId":$('#menuId').val(),
+    			   "inventory":$('#inventory').val()
+    		};
+    		//打开遮罩
+    		$(".sk-circle").css("display","block");
+    		$(".overlay").css("display","block");
     	   $.ajax({
     		data: JSON.stringify(data),
-       		url:  "addMenu",
+       		url:  "addGoods",
        		type: "POST",
        		contentType:"application/json",
        		success:function(data){
-       			debugger;
-       			$("#uploadfile").fileinput('refresh',{
-       				uploadExtraData:{
-       					'id':data.id
-       				}
-       			});
-       			$("#uploadfile").fileinput('upload');
-       			$("#menuName").val("");
-       			$("#uploadfile").fileinput('refresh').fileinput('enable');
-       			$("#parent").select(0);
-       			$('#addMenu').modal('hide');
+       			if(data.respcode!="000000"){
+       				alert(data.respmsg);
+       			}else {
+	       			$("#goodsimg").fileinput('refresh',{
+	       				uploadExtraData:{
+	       					'id':data.id,
+	       					'type':'goodsimg'
+	       				}
+	       			});
+	       			$("#uploadfile").fileinput('refresh',{
+	       				uploadExtraData:{
+	       					'id':data.id,
+	       					'type':'bannerImg'
+	       				}
+	       			});
+	       			$("#goodsimg").fileinput('upload');
+	       			$("#uploadfile").fileinput('upload');
+	       			$("#title").val("");
+	       			$("#price").val("");
+	       			$("#oriPrice").val("0.00");
+	       			$("#brand").val("");
+	       			$("#carriage").val("0");
+	       			$('#inventory').val("0");
+	       			$("#specification").val("");
+	       			$("#goodsDesc").val("");
+	       			$("#uploadfile").fileinput('refresh').fileinput('enable');
+	       			$("#menuId").select(0);
+	       			$('#addGoods').modal('hide');
+	       		}
+       			$(".sk-circle").css("display","none");
+    			$(".overlay").css("display","none");
+       			$('#submitbtn').attr('disable',true);
        		},
        		error:function(msg){
-       			console.log("菜单添加失败"+msg)
+       			$(".sk-circle").css("display","none");
+    			$(".overlay").css("display","none");
+       			$('#submitbtn').attr('disable',true);
+       			console.log("商品添加失败"+msg)
        		}
     	   });
        }
