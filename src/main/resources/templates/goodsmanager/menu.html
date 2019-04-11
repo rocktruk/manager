@@ -46,10 +46,10 @@
                         IN+
                     </div>
                 </li>
-                <li>
+                <li class="active">
                     <a th:href="@{menu}"><i class="fa fa-th-large"></i> <span class="nav-label">商品管理</span> <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
-                        <li><a th:href="@{menu}"> 菜单管理</a></li>
+                        <li class="active"><a th:href="@{menu}"> 菜单管理</a></li>
                         <li><a th:href="@{goods}">商品管理</a></li>
                     </ul>
                 </li>
@@ -261,6 +261,7 @@
             	serverSide: true,  //启用服务器端分页
             	renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
             	pagingType: "simple_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
+            	dom: '<"html5buttons"B>lTfgitp',
                 buttons: [
                     {extend: 'excel',title: 'ExampleFile'},
                     {extend: 'pdf',title: 'ExampleFile'},
@@ -280,7 +281,7 @@
             		//封装请求参数
             		 var param = {};
             		 param.length = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
-            		 param.start = data.start;//开始的记录序号
+            		 param.start = data.start/data.length;//开始的记录序号
             		 //ajax请求数据
             		 $.ajax({
             		     type: "POST",

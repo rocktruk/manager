@@ -78,7 +78,6 @@ public class GoodsManagerControl {
 			length = 10;
 		}
 		result = goodsService.searchGoodsForDataTable(null, sort, start, length) ;
-		
 		return result;
 	}
 	

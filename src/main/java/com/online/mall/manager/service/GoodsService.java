@@ -53,7 +53,7 @@ public class GoodsService extends AbstractMallService{
 		long total = noDetailRepos.count();
 		map.put("recordsTotal", total);
 		map.put("recordsFiltered", total);
-		map.put("draw", index+1);
+		map.put("nextstart", index+1);
 		map.put("data", ls);
 		return map;
 	}

@@ -100,7 +100,7 @@ public class GoodsMenuService extends AbstractMallService{
 		map.put("data", ls);
 		map.put("recordsTotal", total);
 		map.put("recordsFiltered", total);
-		map.put("draw", start+1);
+		map.put("nextstart", start+1);
 		return map;
 	}
 	
