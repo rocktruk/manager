@@ -111,6 +111,7 @@
 		                <h4 class="modal-title" id="myModalLabel">新增商品</h4>
 		            </div>
 		            <form id="addForm">
+		            	<input type="text" name="goodsId" id="goodsId" style="display:none" class="form-control" />
 		            <div class="modal-body">
 		            	<div class="row">
 		            		<div class="form-group">
@@ -191,7 +192,7 @@
 		            </form>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-		                <button type="button" id="submitbtn" onclick="addGoods()" class="btn btn-primary">提交</button>
+		                <button type="button" id="submitbtn"  class="btn btn-primary">提交</button>
 		            </div>
 		        </div><!-- /.modal-content -->
 		    </div><!-- /.modal -->
@@ -203,7 +204,7 @@
             <div class="col-lg-12">
             <div class="ibox float-e-margins">
             <div class="ibox-title">
-                <h5>Editable Table in- combination with jEditable</h5>
+                <h5>商品管理</h5>
                 <div class="ibox-tools">
                     <a class="collapse-link">
                         <i class="fa fa-chevron-up"></i>
@@ -216,18 +217,19 @@
             <div class="ibox-content">
 	            <div class="">
 		            <a  href="javascript:;" data-toggle="modal" data-target="#addGoods" class="btn btn-primary">新增</a>
-		            <a  href="javascript:;" data-toggle="modal" data-target="#addGoods" onclick="updateGoods()" class="btn btn-warning">修改</a>
-		            <a  href="javascript:;" data-toggle="modal" data-target="#addMenu" class="btn btn-danger">删除</a>
+		            <a  href="javascript:;" data-toggle="modal" onclick="updateGoods()" class="btn btn-warning">修改</a>
+		            <a  href="javascript:;" data-toggle="modal" onclick="delGoods()" class="btn btn-danger">删除</a>
 	            </div>
             <table class="table table-striped table-bordered table-hover " id="editable" >
             <thead>
             <tr>
-                <th style="text-align: center"></th>
+                <th style="text-align: center"><input type="checkbox" onchange="allselect()" class="checkchild" /></th>
                 <th>商品名称</th>
                 <th>品牌</th>
                 <th>价格</th>
                 <th>运费</th>
                 <th>原价格</th>
+                <th>库存</th>
                 <th>商品描述</th>
                 <th>商品规格</th>
                 <th>分类</th>
@@ -294,7 +296,7 @@
     <script th:src="@{js/plugins/fileinput/sortable.min.js}" type="text/javascript"></script>
     <script th:src="@{js/fileinput.min.js}" type="text/javascript"></script>
     <script th:src="@{js/zh.js}" type="text/javascript"></script>
-    <script th:src="@{js/bootstrapValidator.min.js}" type="text/javascript"></script>
+    <script th:src="@{js/bootstrapValidator.js}" type="text/javascript"></script>
     <script th:src="@{js/bootstrapValidator.min.extend.js}" type="text/javascript"></script>
     <script th:src="@{css/themes/explorer-fa/theme.min.js}"type="text/javascript"></script>
     <script th:src="@{css/themes/fa/theme.min.js}"type="text/javascript"></script>
@@ -335,6 +337,7 @@
             var oTable = $('#editable').DataTable({
             	"processing" : true, //DataTables载入数据时，是否显示进度条
             	"oLanguage":lang,
+            	"order": [],
             	serverSide: true,  //启用服务器端分页
             	renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
             	pagingType: "simple_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
@@ -396,7 +399,7 @@
 		                      $(td).css('text-align', 'center'); 
 		                 },
            				 render(data, type, full, meta) { 
-            				 	return '<input type="checkbox" class="checkchild" value="${data}" />';
+            				 	return '<input type="checkbox" class="checkchild" onclick="checktr()" value="${data}" />';
                          }
 
             		 },
@@ -405,15 +408,39 @@
             		 {"data":"price"},
             		 {"data":"carriage"},
             		 {"data":"oriPrice"},
+            		 {"data":"inventory"},
             		 {"data":"desc"},
             		 {"data":"specification"},
             		 {"data":"menu.menuName"},
-            		 {"data":"menu.id"}
+            		 {
+            		 	"data":"status",
+            		 	render(data, type, full, meta) {
+            				 	return data == '1'? '已下架':(data == '2'?'在售':'待上架');
+                         }
+            		 },
+            		 {
+            		 	"data":"menu.id",
+            		 	"createdCell": function (td, cellData, rowData, row, col) {  
+		                      $(td).css('display', 'none'); 
+		                 }
+            		 }
             	 ]
             	
             });
+            $('#editable tbody').on('click', 'tr', function selectrow() {
+			    if ($(this).hasClass('selected')) {
+			       $(this).removeClass('selected');
+			      	$(this).find(".checkchild").prop("checked",false);
+			    } else {
+			       //table.$('tr.selected').removeClass('selected');
+			       $(this).addClass('selected');
+			       $(this).find(".checkchild").prop("checked",true);
+			    }
+			});
+            
         });
 
+		
 		
 		function fileinputInit(id){
             	$("#"+id).fileinput({
@@ -458,6 +485,7 @@
        			},
        			fields:{
        				title:{
+       					trigger:"change",
        					validators:{
        						notEmpty:{
        							message:"商品名称不可以为空"
@@ -470,6 +498,7 @@
        					}
        				},
        				brand:{
+       					trigger:"change",
        					validators:{
        						notEmpty:{
        							message:"品牌不可以为空"
@@ -482,6 +511,7 @@
        					}
        				},
        				price:{
+       					trigger:"change",
        					validators:{
        						notEmpty:{
        							message:"价格不可以为空"
@@ -497,6 +527,7 @@
        					}
        				},
        				oriPrice:{
+       					trigger:"change",
        					validators:{
        						regexp:{
        							regexp: /(^[1-9][0-9]{0,9}(\.[0-9]{1,2}){0,1}$)|(^0$)|(^\d\.\d{1,2}$)/,
@@ -511,6 +542,7 @@
        					}
        				},
        				carriage:{
+       					trigger:'change',
        					validators:{
        						regexp:{
        							regexp: /(^[1-9][0-9]{0,4}$)|(^0{1})$/,
@@ -519,6 +551,7 @@
        					}
        				},
        				inventory:{
+       					trigger:"change",
        					validators:{
        						regexp:{
        							regexp: /(^[1-9][0-9]{0,10}$)/,
@@ -531,6 +564,7 @@
        					}
        				},
        				specification:{
+       					trigger:'change',
        					validators:{
        						notEmpty:{
        							message:"商品规格不可以为空"
@@ -543,6 +577,7 @@
        					}
        				},
        				goodsDesc:{
+       					trigger:"change",
        					validators:{
        						notEmpty:{
        							message:"商品描述不可以为空"
@@ -553,38 +588,13 @@
        							message:"商品描述长度不能少于1位，不能长于200位"
        						}
        					}
-       				},
-       				goodsimg:{
-       					validators:{
-       						notEmpty: {
-                        		message: '商品图片不能为空'
-		                    },
-		                    file: {
-		                        extension: 'png,jpg,jpeg,ico',
-		                        type: 'image/png,image/jpg,image/jpeg,image/ico',
-		                        message: '请重新选择图片'
-		                    }
-       					}	
-       				},
-       				uploadfile:{
-       					validators:{
-       						notEmpty: {
-                        		message: '轮播图片不能为空'
-		                    },
-		                    file: {
-		                        extension: 'png,jpg,jpeg,ico',
-		                        type: 'image/png,image/jpg,image/jpeg,image/ico',
-		                        message: '请重新选择图片'
-		                    }
-       					}	
        				}
        			}
        		});
        }
 
 		//商品新增
-       function addGoods()
-       {
+       function addGoods(url){
        //禁用按钮
        		$('#submitbtn').attr('disable',false);
        		//验证表单
@@ -595,22 +605,23 @@
        		}
        		//取值
     	   var data = {
-    	   			"title":$('#title').val(),
-    			   "price":$('#price').val(),
-    			   "brand":$('#brand').val(),
-    			   "oriPrice":$('#oriPrice').val(),
-    			   "carriage":$('#carriage').val(),
-    			   "specification":$('#specification').val(),
-    			   "goodsDesc":$('#goodsDesc').val(),
-    			   "menuId":$('#menuId').val(),
-    			   "inventory":$('#inventory').val()
+    	   	   "goodsId":$('#goodsId').val(),
+	   		   "title":$('#title').val(),
+			   "price":$('#price').val(),
+			   "brand":$('#brand').val(),
+			   "oriPrice":$('#oriPrice').val(),
+			   "carriage":$('#carriage').val(),
+			   "specification":$('#specification').val(),
+			   "goodsDesc":$('#goodsDesc').val(),
+			   "menuId":$('#menuId').val(),
+			   "inventory":$('#inventory').val()
     		};
     		//打开遮罩
     		$(".sk-circle").css("display","block");
     		$(".overlay").css("display","block");
     	   $.ajax({
     		data: JSON.stringify(data),
-       		url:  "addGoods",
+       		url:  url,
        		type: "POST",
        		contentType:"application/json",
        		success:function(data){
@@ -618,20 +629,24 @@
        				alert(data.respmsg);
        			}else {
        				$('#editable').DataTable().ajax.reload();
-	       			$("#goodsimg").fileinput('refresh',{
-	       				uploadExtraData:{
-	       					'id':data.id,
-	       					'type':'goodsimg'
-	       				}
-	       			});
-	       			$("#uploadfile").fileinput('refresh',{
-	       				uploadExtraData:{
-	       					'id':data.id,
-	       					'type':'bannerImg'
-	       				}
-	       			});
-	       			$("#goodsimg").fileinput('upload');
-	       			$("#uploadfile").fileinput('upload');
+	       			if($("#goodsimg")[0].files.length){
+	       				$("#goodsimg").fileinput('refresh',{
+		       				uploadExtraData:{
+		       					'id':data.id,
+		       					'type':'goodsimg'
+		       				}
+		       			});
+	       				$("#goodsimg").fileinput('upload');
+	       			}
+	       			if($("#uploadfile")[0].files.length){
+	       				$("#uploadfile").fileinput('refresh',{
+		       				uploadExtraData:{
+		       					'id':data.id,
+		       					'type':'bannerImg'
+		       				}
+		       			});
+		       			$("#uploadfile").fileinput('upload');
+	       			}
 	       			$('#addGoods').modal('hide');
 	       		}
        			$(".sk-circle").css("display","none");
@@ -656,25 +671,78 @@
   			$('#inventory').val("");
   			$("#specification").val("");
   			$("#goodsDesc").val("");
+  			$("#goodsId").val("");
   			$("#uploadfile").fileinput('refresh').fileinput('enable');
   			$("#goodsimg").fileinput('refresh').fileinput('enable');
-  			$("#menuId").select(0);
+  			$("#menuId").val(0);
   			//移除校验
   			$("#addForm").data('bootstrapValidator').destroy();
 			$('#addForm').data('bootstrapValidator',null);
 			validatorInit();
+			$('#submitbtn').off("click");
        });
        
-       function updateGoods(){
-    	   $('#editable').DataTable().rows(['.selected']).data();
-    	   
+       function delGoods(){
+       		
        }
        
+       function updateGoods(){
+    	  var rows =  $('#editable').DataTable().rows('.selected').data();
+    	  if(rows.length!=1){
+    	  		alert("有且仅请选择一行数据以做更新");
+    	  		return;
+    	  }
+    	  	$("#goodsId").val(rows[0].id);
+    	  	$("#title").val(rows[0].title);
+			$("#price").val(rows[0].price);
+			$("#oriPrice").val(rows[0].oriPrice);
+			$("#brand").val(rows[0].brand);
+			$("#carriage").val(rows[0].carriage);
+			$('#inventory').val(rows[0].inventory);
+			$("#specification").val(rows[0].specification);
+			$("#goodsDesc").val(rows[0].desc);
+			$("#menuId").val(rows[0].menu.id);
+		    $('#addGoods').modal('show');
+       }
+       
+        $('#addGoods').on('shown.bs.modal', function (event) {
+        	$("#title").change();
+			$("#price").change();
+			$("#oriPrice").change();
+			$("#brand").change();
+			$("#carriage").change();
+			$('#inventory').change();
+			$("#specification").change();
+			$("#goodsDesc").change();
+			$("#menuId").change();
+        });
+       
+       //模态打开事件
        $('#addGoods').on('show.bs.modal', function (event) {
-    	   if($('.btn btn-warning').context.activeElement===event.relatedTarget){
-    		   
-    	   }
-        })
+       		if(event.relatedTarget){
+	       		$('#submitbtn').on('click',function(){
+	       			addGoods('addGoods');
+	       		})
+	       	}else{
+	       		$('#submitbtn').on('click',function(){
+	       			addGoods('updGoods');
+	       		});
+	       		$(".modal-title").text('商品修改');
+	       	}
+        });
+       
+       function checktr(){
+       		var row = $(this).closest("tr");
+       		if(row.hasClass('selected')){
+       			row.removeClass('selected');
+       		}else{
+       			row.addClass('selected');
+       		}
+       }
+       //全选行
+       function allselect(){
+       		$('#editable tbody').find("tr").trigger("click");
+       }
        
     </script>
 

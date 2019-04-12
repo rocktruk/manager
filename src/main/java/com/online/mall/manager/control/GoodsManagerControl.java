@@ -134,7 +134,11 @@ public class GoodsManagerControl {
 		return result;
 	}
 	
-	
+	/**
+	 * 商品新增
+	 * @param req
+	 * @return
+	 */
 	@RequestMapping("addGoods")
 	@ResponseBody
 	public Map<String,Object> addGoods(@RequestBody Map<String,Object> req){
@@ -173,6 +177,69 @@ public class GoodsManagerControl {
 		return result;
 	}
 	
+	/**
+	 * 更新商品
+	 * @param req
+	 * @return
+	 */
+	@RequestMapping("updGoods")
+	@ResponseBody
+	public Map<String,Object> updGoods(@RequestBody Map<String,Object> req){
+		Map<String,Object> result = new HashMap<String, Object>();
+		try {
+			String code = ParamUtil.validatorColumn(req, new String[]{"goodsId","brand","title","specification","price","inventory"});
+			if(!code.equals(RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC))) {
+				result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(code));
+				result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getMsgByCode(code));
+				return result;
+			}
+			String goodsId = (String)req.get("goodsId");
+			Goods goods = new Goods();
+			goods.setBrand((String)req.get("brand"));
+			goods.setCarriage(Integer.parseInt((String)req.get("carriage")));
+			goods.setDesc((String)req.get("goodsDesc"));
+			goods.setId(goodsId);
+			goods.setInventory(Integer.parseInt((String)req.get("inventory")));
+			GoodsMenu menu = new GoodsMenu();
+			menu.setId(Integer.parseInt((String)req.get("menuId")));
+			goods.setMenu(menu);
+			goods.setOriPrice(req.get("oriPrice")==null?BigDecimal.ZERO.setScale(2):new BigDecimal((String)req.get("oriPrice")).setScale(2));
+			goods.setPrice(new BigDecimal((String)req.get("price")).setScale(2));
+			goods.setSpecification((String)req.get("specification"));
+			goods.setStatus(DictConstantsUtil.INSTANCE.getDictVal(ConfigConstants.GOODS_STATUS_TOSALE));
+			goods.setTitle((String)req.get("title"));
+			goodsService.saveGoods(goods);
+			result.put("id", goodsId);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
+		}catch(Exception e) {
+			log.error(e.getMessage(),e);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SYSERR));
+		}
+		return result;
+	}
+	
+	/**
+	 * 删除商品
+	 * @param ids
+	 * @return
+	 */
+	@RequestMapping("delGoods")
+	@ResponseBody
+	public Map<String,Object> delGoods(@RequestBody List<String> ids){
+		Map<String,Object> result = new HashMap<String, Object>();
+		try {
+			goodsService.deleteGoods(ids);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
+		}catch(Exception e) {
+			log.error(e.getMessage(),e);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SYSERR));
+		}
+		return result;
+	}
 	
 	/**
 	 * 菜单图片上传

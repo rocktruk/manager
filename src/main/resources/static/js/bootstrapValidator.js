@@ -669,6 +669,7 @@ if (typeof jQuery === 'undefined') {
          * @param {String} [validatorName] The validator name
          */
         _onFieldValidated: function($field, validatorName) {
+        	debugger;
             var field         = $field.attr('data-bv-field'),
                 validators    = this.options.fields[field].validators,
                 counter       = {},

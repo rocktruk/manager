@@ -2,6 +2,7 @@ package com.online.mall.manager.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,7 +124,18 @@ public class GoodsService extends AbstractMallService{
 		goodRepository.save(goods);
 	}
 	
-	
+	@Transactional
+	public void deleteGoods(List<String> ids) {
+		List<Goods> gs = new ArrayList<Goods>();
+		ids.stream().map(s -> {
+			Goods g = new Goods();
+			g.setId(s);
+			gs.add(g);
+			return s;
+		});
+		goodRepository.deleteInBatch(gs);
+		
+	}
 	
 	
 	
