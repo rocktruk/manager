@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,23 @@ public class GoodsService extends AbstractMallService{
 	
 	@Autowired
 	private GoodsWithoutDetailRepository noDetailRepos;
+	
+	public static final Map<Integer,String> orderColumn;
+	static {
+		orderColumn = new HashMap<Integer, String>();
+		orderColumn.put(1, "title");
+		orderColumn.put(2, "brand");
+		orderColumn.put(3, "price");
+		orderColumn.put(4, "carriage");
+		orderColumn.put(10, "monthSales");
+		orderColumn.put(11, "totalSales");
+		orderColumn.put(12, "status");
+	}
+	
+	
+	public String orderGoods(int orderSeq) {
+		return orderColumn.get(orderSeq);
+	}
 	
 	
 	/**
@@ -72,6 +90,9 @@ public class GoodsService extends AbstractMallService{
 			goods = new GoodsWithoutDetail();
 		}
 		ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("inventory","totalSales","monthSales","carriage");
+		if(goods.getTitle()!=null)	{
+			matcher.withMatcher("title", ExampleMatcher.GenericPropertyMatchers.contains());
+		}
 		Example<GoodsWithoutDetail> example = Example.of(goods,matcher);
 		PageRequest page = null;
 		if(sort == null)
@@ -132,13 +153,18 @@ public class GoodsService extends AbstractMallService{
 			g.setId(s);
 			gs.add(g);
 			return s;
-		});
+		}).collect(Collectors.toList());
 		goodRepository.deleteInBatch(gs);
 		
 	}
 	
+	@Transactional
+	public void updateGoodsStatus(String id,String status) {
+		goodRepository.updateGoodsSetStatusWithId(id, status);
+	}
 	
-	
-	
-	
+	@Transactional
+	public void updateBatchGoodsStatus(String id,String status) {
+		goodRepository.updateBatchGoodsSetStatusWithId(id, status);
+	}
 }

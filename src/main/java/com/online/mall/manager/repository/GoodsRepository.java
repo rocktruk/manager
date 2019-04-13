@@ -27,4 +27,16 @@ public interface GoodsRepository extends IExpandJpaRepository<Goods, String> {
 	@Transactional
 	@Query("update Goods g set g.banerImages = ?2 where g.id = ?1")
 	int updateGoodsBannersWithId(String id,String imgPath);
+	
+	@Modifying
+	@Transactional
+	@Query("update Goods g set g.status = ?2 where g.id = ?1")
+	int updateGoodsSetStatusWithId(String id,String status);
+	
+	
+	
+	@Modifying
+	@Transactional
+	@Query("update Goods g set g.status = ?2 where g.id in (?1)")
+	int updateBatchGoodsSetStatusWithId(String id,String status);
 }

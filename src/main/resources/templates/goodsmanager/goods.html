@@ -233,6 +233,8 @@
                 <th>商品描述</th>
                 <th>商品规格</th>
                 <th>分类</th>
+                <th>月销量</th>
+                <th>总销量</th>
                 <th>状态</th>
                 <th style="display:none">menuId</th>
             </tr>
@@ -368,13 +370,18 @@
             		 param.length = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
             		 param.start = data.start/data.length;//开始的记录序号
             		 param.draw = data.draw;//当前页码
-
+					 param.search = data.search.value;
+					 if(data.order.length > 0){
+	            		 param.orderColumn = data.order[0].column;
+						 param.orderSort = data.order[0].dir;
+					 }
             		 //ajax请求数据
             		 $.ajax({
             		     type: "POST",
             		     url: "goodsLoad",
             		     cache: false,  //禁用缓存
-            		     data: param,
+            		     data: JSON.stringify(param),
+            		     contentType:"application/json",
             		     dataType: "json",
             		     success: function (result) {
             		         //封装返回数据
@@ -407,16 +414,36 @@
             		 {"data":"brand"},
             		 {"data":"price"},
             		 {"data":"carriage"},
-            		 {"data":"oriPrice"},
-            		 {"data":"inventory"},
-            		 {"data":"desc"},
-            		 {"data":"specification"},
-            		 {"data":"menu.menuName"},
+            		 {
+            			 "data":"oriPrice",
+            			 "orderable": false
+            		 },
+            		 {
+            			 "data":"inventory",
+            			 "orderable": false	 
+            		 },
+            		 {
+            			 "data":"desc",
+            			 "orderable": false	 
+            		 },
+            		 {
+            			 "data":"specification",
+            			 "orderable": false	 
+            		 },
+            		 {
+            			 "data":"menu.menuName",
+            			 "orderable": false
+            		 },
+            		 {"data":"monthSales"},
+            		 {"data":"totalSales"},
             		 {
             		 	"data":"status",
+            		 	"createdCell": function (td, cellData, rowData, row, col) {  
+		                      $(td).css('text-align', 'center'); 
+		                 },
             		 	render(data, type, full, meta) {
-            				 	return data == '1'? '已下架':(data == '2'?'在售':'待上架');
-                         }
+            				 return data == '2'?'<a  href="javascript:;" data-toggle="modal" onclick="updGoodsStatus(0,\'3\',\''+full.id+'\')" class="btn btn-warning btn-xs">下架</a>':(data == '3'? '<a  href="javascript:;" data-toggle="modal" onclick="updGoodsStatus(0,\'2\',\''+full.id+'\')" class="btn btn-primary btn-xs">上架</a>':(data == '1' && full.inventory==0 ?'已下架':'<a  href="javascript:;" data-toggle="modal" onclick="updGoodsStatus(0,\'2\',\''+full.id+'\')" class="btn btn-primary btn-xs">上架</a>' ));
+                        }
             		 },
             		 {
             		 	"data":"menu.id",
@@ -683,8 +710,66 @@
        });
        
        function delGoods(){
-       		
+    	   var rows =  $('#editable').DataTable().rows('.selected').data();
+     	   if(rows.length < 1){
+     	  		alert("请选择至少一行数据以做删除");
+     	  		return;
+     	   }
+     	  var data = [];
+     	   for(i=0;i<rows.length;i++){
+     		  data[i] = rows[i].id;
+     	   }
+     	   var param = {"ids":data};
+    	   $.ajax({
+  		     type: "POST",
+  		     url: "delGoods",
+  		     cache: false,  //禁用缓存
+  		     data: JSON.stringify(param),
+  		   	 contentType:"application/json",
+  		     success: function (result) {
+  		    	 if(result.respcode=='000000'){
+  		    		$('#editable').DataTable().ajax.reload();
+  		    	 }else{
+  		    		 alert(result.respmsg);
+  		    	 }
+  		     },
+  		     error:function (msg){
+  		    	 console.log(msg);
+  		     }
+    	   });
        }
+       
+       
+       function updGoodsStatus(batch,status,id){
+    	 var url = "goodsStatusUpd";
+    	 var param;
+    	 if(batch){
+    		 url = 'batchUpdStatus';
+    	 }else{
+    		 param = {
+	    			goodsId:id,
+	    			statu:status
+	    		 };
+    	 }
+    	 $.ajax({
+  		     type: "POST",
+  		     url: url,
+  		     cache: false,  //禁用缓存
+  		     data: JSON.stringify(param),
+  		   	 contentType:"application/json",
+  		     success: function (result) {
+  		    	 if(result.respcode=='000000'){
+  		    		$('#editable').DataTable().ajax.reload();
+  		    	 }else{
+  		    		 alert(result.respmsg);
+  		    	 }
+  		     },
+  		     error:function (msg){
+  		    	 console.log(msg);
+  		     }
+    	  });
+       }
+       
        
        function updateGoods(){
     	  var rows =  $('#editable').DataTable().rows('.selected').data();

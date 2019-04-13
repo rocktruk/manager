@@ -29,6 +29,7 @@ import com.online.mall.manager.common.ParamUtil;
 import com.online.mall.manager.common.RespConstantsUtil;
 import com.online.mall.manager.entity.Goods;
 import com.online.mall.manager.entity.GoodsMenu;
+import com.online.mall.manager.entity.GoodsWithoutDetail;
 import com.online.mall.manager.service.GoodsMenuService;
 import com.online.mall.manager.service.GoodsService;
 
@@ -70,14 +71,29 @@ public class GoodsManagerControl {
 	
 	@RequestMapping("/goodsLoad")
 	@ResponseBody
-	public Map<String,Object> loadGoodsWithPage(HttpServletRequest request,@RequestParam(value = "length") int length,
-			@RequestParam(value = "start") int start){
+	public Map<String,Object> loadGoodsWithPage(HttpServletRequest request,@RequestBody Map<String,Object> req){
 		Map<String,Object> result = new HashMap<String, Object>();
-		Sort sort = new Sort(Direction.DESC, "createTime");
+		Sort sort;
+		int orderColumn = req.get("orderColumn") == null?0:(Integer)req.get("orderColumn");
+		int start = (Integer)req.get("start");
+		int length = (Integer)req.get("length");
+		String orderSort = (String)req.get("orderSort");
+		String search = (String)req.get("search");
+		if (orderColumn < 1) {
+			sort = new Sort(Direction.DESC, "createTime");
+		}else {
+			sort = new Sort("asc".equals(orderSort)?Direction.ASC:Direction.DESC, goodsService.orderGoods(orderColumn));
+		}
 		if(length == 0) {
 			length = 10;
 		}
-		result = goodsService.searchGoodsForDataTable(null, sort, start, length) ;
+		if(search == null || "".equals(search)) {	
+			result = goodsService.searchGoodsForDataTable(null, sort, start, length) ;
+		}else {
+			GoodsWithoutDetail goods = new GoodsWithoutDetail();
+			goods.setTitle(search);
+			result = goodsService.searchGoodsForDataTable(goods, sort, start, length) ;
+		}
 		return result;
 	}
 	
@@ -227,10 +243,53 @@ public class GoodsManagerControl {
 	 */
 	@RequestMapping("delGoods")
 	@ResponseBody
-	public Map<String,Object> delGoods(@RequestBody List<String> ids){
+	public Map<String,Object> delGoods(@RequestBody Map<String,Object> req){
 		Map<String,Object> result = new HashMap<String, Object>();
 		try {
-			goodsService.deleteGoods(ids);
+			goodsService.deleteGoods((List<String>)req.get("ids"));
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
+		}catch(Exception e) {
+			log.error(e.getMessage(),e);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SYSERR));
+		}
+		return result;
+	}
+	
+	/**
+	 *更新商品状态，上下架操作
+	 * @param req
+	 * @return
+	 */
+	@RequestMapping("goodsStatusUpd")
+	@ResponseBody
+	public Map<String,Object> updGoodsStatus(@RequestBody Map<String,String> req){
+		Map<String,Object> result = new HashMap<String, Object>();
+		try {
+			goodsService.updateGoodsStatus(req.get("goodsId"), req.get("statu"));
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
+		}catch(Exception e) {
+			log.error(e.getMessage(),e);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SYSERR));
+		}
+		return result;
+	}
+	
+	
+	/**
+	 *批量更新商品状态，上下架操作
+	 * @param req
+	 * @return
+	 */
+	@RequestMapping("batchUpdStatus")
+	@ResponseBody
+	public Map<String,Object> updBatchGoodsStatus(@RequestBody Map<String,String> req){
+		Map<String,Object> result = new HashMap<String, Object>();
+		try {
+			goodsService.updateBatchGoodsStatus(req.get("goodsId"), req.get("statu"));
 			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
 			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
 		}catch(Exception e) {

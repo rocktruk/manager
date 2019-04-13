@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,7 +37,7 @@ public class RespConstantsUtil {
 	{
 		Properties dict = new Properties();
 		try {
-			dict.load(new FileInputStream(new File(RespConstantsUtil.class.getResource("/respcode.properties").getFile())));
+			dict.load(new InputStreamReader(new FileInputStream(new File(RespConstantsUtil.class.getResource("/respcode.properties").getFile()))));
 			for(Entry<Object, Object> entry : dict.entrySet())
 			{
 				if(entry.getKey().toString().startsWith(IConstants.RESP_CODE))

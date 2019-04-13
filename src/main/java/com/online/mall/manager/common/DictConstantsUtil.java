@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ public class DictConstantsUtil {
 	{
 		Properties dict = new Properties();
 		try {
-			dict.load(new FileInputStream(new File(DictConstantsUtil.class.getResource("/dict.properties").getFile())));
+			dict.load(new InputStreamReader(new FileInputStream(new File(DictConstantsUtil.class.getResource("/dict.properties").getFile()))));
 		} catch (FileNotFoundException e) {
 			log.error(e.getMessage(),e);
 		} catch (IOException e) {
