@@ -21,7 +21,7 @@
 	</appender>
 	
 	
-    <logger name="com.online.mall.manager" level="info" additivity="false">
+    <logger name="com.online.mall.manager" level="debug" additivity="false">
         <appender-ref ref="tracelog"/>
         <appender-ref ref="stdout"/>
     </logger>

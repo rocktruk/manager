@@ -1,6 +1,7 @@
 package com.online.mall.manager.repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -34,9 +35,8 @@ public interface GoodsRepository extends IExpandJpaRepository<Goods, String> {
 	int updateGoodsSetStatusWithId(String id,String status);
 	
 	
-	
 	@Modifying
 	@Transactional
-	@Query("update Goods g set g.status = ?2 where g.id in (?1)")
-	int updateBatchGoodsSetStatusWithId(String id,String status);
+	@Query(value="update Goods g set g.status = ?1 where g.id in (?2)")
+	int updateGoodsSetStatusByIdIn(String status,Collection<String> id);
 }

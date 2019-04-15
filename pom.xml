@@ -33,7 +33,12 @@
 		    <version>2.6.2</version>
 		</dependency>
 
-		
+		<!--  JWT -->
+		<dependency>
+	      <groupId>com.auth0</groupId>
+	      <artifactId>java-jwt</artifactId>
+	      <version>3.4.0</version>
+		</dependency>
 		
     <!--jpa的jar包 ，操作数据库的，类似hibernate-->
         <dependency>

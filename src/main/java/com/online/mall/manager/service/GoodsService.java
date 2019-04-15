@@ -3,6 +3,7 @@ package com.online.mall.manager.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,6 +166,7 @@ public class GoodsService extends AbstractMallService{
 	
 	@Transactional
 	public void updateBatchGoodsStatus(String id,String status) {
-		goodRepository.updateBatchGoodsSetStatusWithId(id, status);
+		log.debug("update goods status:"+status+"|ids:"+id);
+		goodRepository.updateGoodsSetStatusByIdIn(status,Arrays.asList(id.split((","))));
 	}
 }

@@ -217,25 +217,29 @@
             <div class="ibox-content">
 	            <div class="">
 		            <a  href="javascript:;" data-toggle="modal" data-target="#addGoods" class="btn btn-primary">新增</a>
-		            <a  href="javascript:;" data-toggle="modal" onclick="updateGoods()" class="btn btn-warning">修改</a>
-		            <a  href="javascript:;" data-toggle="modal" onclick="delGoods()" class="btn btn-danger">删除</a>
+		            <a  href="javascript:;" onclick="updateGoods()" class="btn btn-warning">修改</a>
+		            <a  href="javascript:;" onclick="delGoods()" class="btn btn-danger">删除</a>
+		            <a  href="javascript:;" onclick="putAway()" class="btn btn-primary">批量上架</a>
+		            <a  href="javascript:;" onclick="soldOut()" class="btn btn-warning">批量下架</a>
+		            <a  href="javascript:;" onclick="soldOut()" class="btn btn-warning">置顶商品</a>
+		            <a  href="javascript:;" onclick="soldOut()" class="btn btn-warning">推荐商品</a>
 	            </div>
             <table class="table table-striped table-bordered table-hover " id="editable" >
             <thead>
             <tr>
                 <th style="text-align: center"><input type="checkbox" onchange="allselect()" class="checkchild" /></th>
-                <th>商品名称</th>
-                <th>品牌</th>
-                <th>价格</th>
-                <th>运费</th>
-                <th>原价格</th>
-                <th>库存</th>
-                <th>商品描述</th>
-                <th>商品规格</th>
-                <th>分类</th>
-                <th>月销量</th>
-                <th>总销量</th>
-                <th>状态</th>
+                <th style="width:10%">商品名称</th>
+                <th style="width:10%">品牌</th>
+                <th style="width:7%">价格</th>
+                <th style="width:7%">运费</th>
+                <th style="width:7%">原价格</th>
+                <th style="width:8%">库存</th>
+                <th style="width:9%">商品描述</th>
+                <th style="width:10%">商品规格</th>
+                <th style="width:10%">分类</th>
+                <th style="width:8%">月销量</th>
+                <th style="width:8%">总销量</th>
+                <th style="width:7%">状态</th>
                 <th style="display:none">menuId</th>
             </tr>
             </thead>
@@ -413,7 +417,10 @@
             		 {"data":"title"},
             		 {"data":"brand"},
             		 {"data":"price"},
-            		 {"data":"carriage"},
+            		 {
+            		 	"data":"carriage",
+            		 	"orderable": false	
+            		 },
             		 {
             			 "data":"oriPrice",
             			 "orderable": false
@@ -454,15 +461,22 @@
             	 ]
             	
             });
-            $('#editable tbody').on('click', 'tr', function selectrow() {
-			    if ($(this).hasClass('selected')) {
-			       $(this).removeClass('selected');
-			      	$(this).find(".checkchild").prop("checked",false);
-			    } else {
-			       //table.$('tr.selected').removeClass('selected');
-			       $(this).addClass('selected');
+            $('#editable tbody').on('click', 'tr', function selectrow(event,s) {
+           		if(s){
+           		   $(this).addClass('selected');
 			       $(this).find(".checkchild").prop("checked",true);
-			    }
+           		}else if(s == false){
+           			$(this).removeClass('selected');
+			      	$(this).find(".checkchild").prop("checked",false);
+           		}else{
+				    if ($(this).hasClass('selected')) {
+				       $(this).removeClass('selected');
+				       $(this).find(".checkchild").prop("checked",false);
+				    } else {
+				       $(this).addClass('selected');
+				       $(this).find(".checkchild").prop("checked",true);
+				    }
+				}
 			});
             
         });
@@ -728,6 +742,9 @@
   		   	 contentType:"application/json",
   		     success: function (result) {
   		    	 if(result.respcode=='000000'){
+  		    	 	if($('#editable thead tr .checkchild')[0].checked){
+  		    	 		$('#editable thead tr .checkchild').click();
+  		    	 	}
   		    		$('#editable').DataTable().ajax.reload();
   		    	 }else{
   		    		 alert(result.respmsg);
@@ -739,18 +756,58 @@
     	   });
        }
        
+       function putAway(){
+       	  var rows =  $('#editable').DataTable().rows('.selected').data();
+    	  if(rows.length<1){
+    	  		alert("请选择需要上架的商品");
+    	  		return;
+    	  }
+    	  var ids = "";
+    	  for(var k=0;k<rows.length;k++){
+    	  		if(rows[k].status == "2"){
+    	  			alert("存在已上架的商品");
+    	  			return;
+    	  		}
+    	  		if(ids == ""){
+    	  			ids += rows[k].id;
+    	  		}else{
+	    	  		ids += ","+rows[k].id;
+    	  		}
+    	  }
+    	  updGoodsStatus(!0,'2',ids);
+       }
+       
+       function soldOut(){
+       	  var rows =  $('#editable').DataTable().rows('.selected').data();
+    	  if(rows.length<1){
+    	  		alert("请选择需要下架的商品");
+    	  		return;
+    	  }
+    	  var ids = "";
+    	  for(var k=0;k<rows.length;k++){
+    	  		if(rows[k].status != "2"){
+    	  			alert("存在已下架的商品");
+    	  			return;
+    	  		}
+    	  		if(ids == ""){
+    	  			ids += rows[k].id;
+    	  		}else{
+	    	  		ids += ","+rows[k].id;
+    	  		}
+    	  }
+    	  updGoodsStatus(!0,'1',ids);
+       }
        
        function updGoodsStatus(batch,status,id){
     	 var url = "goodsStatusUpd";
     	 var param;
     	 if(batch){
     		 url = 'batchUpdStatus';
-    	 }else{
-    		 param = {
+    	 }
+    	 param = {
 	    			goodsId:id,
 	    			statu:status
 	    		 };
-    	 }
     	 $.ajax({
   		     type: "POST",
   		     url: url,
@@ -759,6 +816,9 @@
   		   	 contentType:"application/json",
   		     success: function (result) {
   		    	 if(result.respcode=='000000'){
+  		    	 	if($('#editable thead tr .checkchild')[0].checked){
+  		    	 		$('#editable thead tr .checkchild').click();
+  		    	 	}
   		    		$('#editable').DataTable().ajax.reload();
   		    	 }else{
   		    		 alert(result.respmsg);
@@ -826,7 +886,7 @@
        }
        //全选行
        function allselect(){
-       		$('#editable tbody').find("tr").trigger("click");
+       		$('#editable tbody').find("tr").trigger("click",$('#editable thead tr .checkchild')[0].checked);
        }
        
     </script>
