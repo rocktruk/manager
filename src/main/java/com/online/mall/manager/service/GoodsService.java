@@ -58,6 +58,13 @@ public class GoodsService extends AbstractMallService{
 		return orderColumn.get(orderSeq);
 	}
 	
+	/**
+	 * 查询所有已上架商品的id,title
+	 * @return
+	 */
+	public List<GoodsWithoutDetail> findAllGoodsPutAway(){
+		return noDetailRepos.findAllGoodsPutAway();
+	}
 	
 	/**
 	 * datatable分页查询

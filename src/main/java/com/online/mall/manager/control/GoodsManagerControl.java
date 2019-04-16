@@ -32,6 +32,7 @@ import com.online.mall.manager.entity.GoodsMenu;
 import com.online.mall.manager.entity.GoodsWithoutDetail;
 import com.online.mall.manager.service.GoodsMenuService;
 import com.online.mall.manager.service.GoodsService;
+import com.online.mall.manager.service.RcmndCommdyService;
 
 @Controller
 public class GoodsManagerControl {
@@ -44,6 +45,9 @@ public class GoodsManagerControl {
 	
 	@Autowired
 	private GoodsService goodsService;
+	
+	@Autowired
+	private RcmndCommdyService remndService;
 	
 	@RequestMapping("/index")
 	public String index()
@@ -342,4 +346,31 @@ public class GoodsManagerControl {
 		return result;
 	}
 	
+	/**
+	 * 加载推荐商品selector
+	 * @return
+	 */
+	@RequestMapping("loadGoodsSelector")
+	@ResponseBody
+	public Map<String,Object> loadGoodsSelect(){
+		Map<String,Object> result = new HashMap<String, Object>();
+		try {
+			//获取所有已上架商品
+			List<GoodsWithoutDetail> goods = goodsService.findAllGoodsPutAway();
+			//获取首页轮播商品
+			List<String> hotSales = remndService.hotSale();
+			//获取首页推荐商品
+			List<String> rcmndCommdies = remndService.getRcmndCommdy();
+			result.put("rcmndLs", goods);
+			result.put("hotsale", hotSales);
+			result.put("rcmndGoods", rcmndCommdies);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
+		}catch(Exception e) {
+			log.error(e.getMessage(),e);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SYSERR));
+		}
+		return result;
+	}
 }

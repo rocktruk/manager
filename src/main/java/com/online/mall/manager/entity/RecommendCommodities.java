@@ -3,10 +3,14 @@ package com.online.mall.manager.entity;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
+@Table(name="RCMND_COMDITIS")
+@Entity
 public class RecommendCommodities {
 
 	@Id
