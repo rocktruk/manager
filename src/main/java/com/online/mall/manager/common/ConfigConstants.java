@@ -88,9 +88,16 @@ public class ConfigConstants {
 	
 	public static final String TRXCODE_REFUND = "trxcode.refund";
 	
+	//商品图标上传标志
 	public static final String GOODS_IMG = "goodsimg";
-	
+	//商品轮播图片上传标志
 	public static final String GOODS_BANNER_IMG = "bannerImg";
+	//推荐商品轮播图片上传标志
+	public static final String GOODS_RCMND_IMG = "rcmndimg";
+	
+	public static final String RCMND_BANNER = "rcmnd.banner";
+	
+	public static final String RCMEN_GOODSLS = "rcmen.goodsls";
 	
 }
 

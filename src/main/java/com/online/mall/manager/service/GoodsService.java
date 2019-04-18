@@ -128,7 +128,7 @@ public class GoodsService extends AbstractMallService{
 		try {
 			StringJoiner imgpath = new StringJoiner(",");
 			for(MultipartFile img : imgs) {
-				imgpath.add(writeFile(img,id+File.separator+type));
+				imgpath.add(writeFile(img,type+File.separator+id));
 			}
 			//更新商品图片
 			if(ConfigConstants.GOODS_IMG.equals(type)) {

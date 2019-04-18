@@ -16,6 +16,8 @@ public class IdGenerater {
 	
 	public static final String RECVADDR_PREFIX = "RADD";
 	
+	public static final String RCMND_PREFIX = "RCMND";
+	
 	
 	private IdGenerater() {
 		
@@ -33,6 +35,14 @@ public class IdGenerater {
 		return id;
 	}
 	
+	
+	public String rcmndIdGenerate()
+	{
+		UUIDGenerator generator = UUIDGenerator.getInstance();
+		String id = generator.generateTimeBasedUUID().toString();
+		id = RCMND_PREFIX+id.replaceAll("-", "");
+		return id;
+	}
 	/**
 	 * 交易流水号生成
 	 * @return

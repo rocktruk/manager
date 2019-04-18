@@ -125,18 +125,23 @@
 			            	<div class="row">
 			            		<div class="form-group">
 				            		<label class="control-label">推荐商品：</label>
-				            		<select class="selectpicker form-control" multiple data-max-options="4" required name="rcmndGoods" id="rcmndGoods" data-live-search="true" title="选择推荐商品">
+				            		<select class="selectpicker form-control" multiple required data-max-options="4" name="rcmndGoods" id="rcmndGoods" data-live-search="true" title="选择推荐商品">
 				            		</select>
 			            		</div>
 			            	</div>
 			            	<div class="row">
 			            		<div class="form-group">
-				            		<label class="control-label">热推商品图片：</label>
-				            		<input type="file" name="hotSaleImg" id="hotSaleImg" class="file-loading form-control" />
+				            		<label class="control-label">推荐商品：</label>
+				            		<select class="selectpicker form-control" multiple required data-max-options="9" onchange="addImgUploadDom()" name="hotGoods" id="hotGoods" data-live-search="true" title="选择推荐商品">
+				            		</select>
 			            		</div>
 			            	</div>
 		            	</div>
 		            </form>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+		                <button type="button" id="rcmndBtn" onclick="addRcmnd()"  class="btn btn-primary">提交</button>
+		            </div>
 		        </div>
 		    </div>
         </div>
@@ -359,7 +364,6 @@
 			validatorInit();
 			fileinputInit("goodsimg");
 			fileinputInit("uploadfile");
-			fileinputInit("hotSaleImg");
             lang = {
             	    "sProcessing": "处理中...",
             	    "sLengthMenu": "每页 _MENU_ 项",
@@ -411,7 +415,7 @@
                             $(win.document.body).find('table')
                                     .addClass('compact')
                                     .css('font-size', 'inherit');
-                    }
+                    	}
                     }
                 ],
             	stripeClasses: ["odd", "even"],  //为奇偶行加上样式，兼容不支持CSS伪类的场合
@@ -800,8 +804,8 @@
   		     }
     	   });
        }
-       var hotsales;
-       var rcmndGoods;
+       var hotsales=[];
+       var rcmndGoods=[];
        
        function loadRcnmd(){
        		$.ajax({
@@ -817,9 +821,14 @@
   		    	 	 } 
   		    	 	 $('#rcmndGoods').html("");
   		    	 	 $('#rcmndGoods').html(s);
+  		    	 	 $('#hotGoods').html('');
+  		    	 	 $('#hotGoods').html(s);
   		    	 	 $('#rcmndGoods').selectpicker('refresh');
+  		    	 	 $('#hotGoods').selectpicker('refresh');
+  		    	 	 $('#rcmndType').selectpicker('val','1').trigger('change');
   		    	 	 hotsales = result.hotsales;
   		    	 	 rcmndGoods = result.rcmndGoods;
+  		    	 	 $('#hotGoods').selectpicker('val',hotsales).trigger('change');
   		    	 }else{
   		    		 console.log(result.respmsg);
   		    	 }
@@ -904,6 +913,77 @@
     	  });
        }
        
+       function addRcmnd(){
+       
+       		var param = {
+       						"rcmndType":$('#rcmndType').val(),
+       						"hotGoods":$('#hotGoods').val(),
+       						"rcmndGoods":$('#rcmndGoods').val()
+       					};
+       		$.ajax({
+  		     type: "POST",
+  		     url: "rcmndCommdy",
+  		     data:JSON.stringify(param),
+  		     cache: false,  //禁用缓存
+  		     data: JSON.stringify(param),
+  		   	 contentType:"application/json",
+  		     success: function (result) {
+  		    	 if(result.respcode=='000000'){
+  		    	 	if($('#rcmndType').val()=='1'){
+  		    	 		var hots = $('#hotGoods').val();
+  		    	 		if(hots){
+	  		    	 		for(var k=0;k<hots.length;k++){
+		  		    	 		if($("#"+hots[k])[0].files.length){
+			  		    	 		$("#"+hots[k]).fileinput('refresh',{
+					       				uploadExtraData:{
+					       					'id':result[hots[k]],
+					       					'type':'rcmndimg',
+					       					'file':hots[k]
+					       				}
+					       			});
+				       				$("#"+hots[k]).fileinput('upload');
+				       			}
+		  		    	 	}
+		  		    	 }
+  		    	 	}
+  		    	 	$('#setRcnmd').modal('hide');
+  		    	 }else{
+  		    		 alert(result.respmsg);
+  		    	 }
+  		     },
+  		     error:function (msg){
+  		    	 console.log(msg);
+  		     }
+    	  });
+       
+       }
+       
+       var hotFiles = [];
+       //根据选择的轮播推荐商品，增减该商品对应的图片设置
+       function addImgUploadDom(){
+       		var hots = $('#hotGoods').val();
+       		if(hotFiles){
+       			for(var n in hotFiles){
+       				var index = $.inArray(hotFiles[n], hots);
+       				if(index < 0){
+       					$('#'+hotFiles[n]).closest('.row').remove();
+       				}
+       			}
+       		}
+       		for(var n in hots){
+       			if(hotFiles){
+       				var index = $.inArray(hots[n], hotFiles);
+       				if(index < 0){
+       					$('#rcnmdForm .modal-body').append('<div class="row"><div class="form-group"><label class="control-label">'+$('#hotGoods')[0].selectedOptions[n].label+'：</label><input type="file" name="'+hots[n]+'" id="'+hots[n]+'" class="file-loading form-control" /></div></div>');
+       					fileinputInit(hots[n]);
+       				}
+       			}else{
+       				$('#rcnmdForm .modal-body').append('<div class="row"><div class="form-group"><label class="control-label">'+$('#hotGoods')[0].selectedOptions[n].label+'：</label><input type="file" name="'+hots[n]+'" id="'+hots[n]+'" class="file-loading form-control" /></div></div>');
+       				fileinputInit(hots[n]);
+       			}
+       		}
+			 hotFiles = hots;
+       }
        
        function updateGoods(){
     	  var rows =  $('#editable').DataTable().rows('.selected').data();
@@ -932,12 +1012,22 @@
        
        function changeRcmndSelect(){
        		if($('#rcmndType').val()=='1'){
-       			$('#rcmndGoods').prop('data-max-options','9')
+       			$('#hotGoods').closest('.row').css('display','block');
+       			$('#rcmndGoods').closest('.row').css('display','none');
+       			$('#hotGoods').selectpicker('val',hotsales).trigger('change');
        		}else{
-       			$('#rcmndGoods').prop('data-max-options','4')
+       			$('#rcmndGoods').closest('.row').css('display','block');
+       			$('#hotGoods').selectpicker('deselectAll').trigger('change');
+       			hotFiles = [];
+       			$('#hotGoods').closest('.row').css('display','none');
+       			$('#rcmndGoods').selectpicker('val',rcmndGoods);
        		}
-       		
        }
+       
+       $('#setRcnmd').on('hide.bs.modal', function () {
+       		$('#hotGoods').selectpicker('deselectAll').trigger('change');
+       		hotFiles = [];
+       });
        
         $('#addGoods').on('shown.bs.modal', function (event) {
         	$("#title").change();

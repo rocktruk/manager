@@ -1,7 +1,10 @@
 package com.online.mall.manager.control;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +33,7 @@ import com.online.mall.manager.common.RespConstantsUtil;
 import com.online.mall.manager.entity.Goods;
 import com.online.mall.manager.entity.GoodsMenu;
 import com.online.mall.manager.entity.GoodsWithoutDetail;
+import com.online.mall.manager.entity.RecommendCommodities;
 import com.online.mall.manager.service.GoodsMenuService;
 import com.online.mall.manager.service.GoodsService;
 import com.online.mall.manager.service.RcmndCommdyService;
@@ -339,12 +343,81 @@ public class GoodsManagerControl {
 		List<MultipartFile> img;
 		if(ConfigConstants.GOODS_IMG.equals(type)) {
 			img = map.get("goodsimg");
-		}else {
+		}else if (ConfigConstants.GOODS_BANNER_IMG.equals(type)){
 			img = map.get("uploadfile");
+		}else {
+			img = map.get(request.getParameter("file").toString());
 		}
-		Map<String,Object> result = goodsService.writeGoodsUploadFile(img, id, type);
+		Map<String,Object> result = new HashMap<String, Object>();
+		if(ConfigConstants.GOODS_RCMND_IMG.equals(type)) {
+			result = remndService.writeRcmndUploadFile(img, id, type);
+		}else {
+			result = goodsService.writeGoodsUploadFile(img, id, type);
+		}
 		return result;
 	}
+	
+	
+	@RequestMapping("rcmndCommdy")
+	@ResponseBody
+	public Map<String,Object> setRcmndCommody(@RequestBody Map<String,Object> req){
+		Map<String,Object> result = new HashMap<String, Object>();
+		try {
+			ParamUtil.validatorColumn(req, new String[] {"rcmndType"});
+			String rcmndType = (String)req.get("rcmndType");
+			List<RecommendCommodities> rcmmdCommdities = new ArrayList<RecommendCommodities>();
+			if("1".equals(rcmndType)) {
+				List<String> ls = (List<String>)req.get("hotGoods");
+				//获取所有热销商品的ID及关联ID
+				List<Object[]> olds = remndService.getAllHotRcmndCommdities();
+				List<String> rcmnds = new ArrayList<String>(olds.size());
+				List<String> goodsIds = new ArrayList<String>(olds.size());
+				//分组关联表ID,及商品ID
+				for(Iterator<Object[]> it = olds.iterator();it.hasNext();) {
+					Object[] rcmnd = it.next();
+					rcmnds.add(rcmnd[0].toString());
+					goodsIds.add(rcmnd[1].toString());
+				}
+				for(String s : ls) {
+					//关联表已存在该商品，直接取该商品的关联ID，用于返回前台上传图片
+					int a = goodsIds.indexOf(s);
+					if(a > -1) {
+						result.put(s, rcmnds.get(a));
+						continue;
+					}
+					RecommendCommodities rcmndCommdy = new RecommendCommodities();
+					rcmndCommdy.setId(IdGenerater.INSTANCE.rcmndIdGenerate());
+					GoodsWithoutDetail goods = new GoodsWithoutDetail();
+					goods.setId(s);
+					rcmndCommdy.setGoods(goods);
+					rcmndCommdy.setRcmndType(DictConstantsUtil.INSTANCE.getDictVal(ConfigConstants.RCMND_BANNER));
+					rcmmdCommdities.add(rcmndCommdy);
+					result.put(s, rcmndCommdy.getId());
+				}
+				remndService.addRcmnd(rcmmdCommdities, goodsIds,ls);
+			}else {
+				List<String> ls = (List<String>)req.get("rcmndGoods");
+				for(String s : ls) {
+					RecommendCommodities rcmndCommdy = new RecommendCommodities();
+					rcmndCommdy.setId(IdGenerater.INSTANCE.rcmndIdGenerate());
+					GoodsWithoutDetail goods = new GoodsWithoutDetail();
+					goods.setId(s);
+					rcmndCommdy.setGoods(goods);
+					rcmndCommdy.setRcmndType(DictConstantsUtil.INSTANCE.getDictVal(ConfigConstants.RCMEN_GOODSLS));
+					rcmmdCommdities.add(rcmndCommdy);
+				}
+				remndService.addRcmnd(rcmmdCommdities, remndService.getRcmndCommdy(),ls);
+			}
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
+		}catch(Exception e) {
+			log.error(e.getMessage(),e);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SYSERR));
+		}
+		return result;
+	}
+	
 	
 	/**
 	 * 加载推荐商品selector
@@ -362,7 +435,7 @@ public class GoodsManagerControl {
 			//获取首页推荐商品
 			List<String> rcmndCommdies = remndService.getRcmndCommdy();
 			result.put("rcmndLs", goods);
-			result.put("hotsale", hotSales);
+			result.put("hotsales", hotSales);
 			result.put("rcmndGoods", rcmndCommdies);
 			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
 			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
