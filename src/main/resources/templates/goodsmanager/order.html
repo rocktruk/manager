@@ -17,7 +17,6 @@
     <link th:href="@{css/plugins/dropzone/dropzone.css}" rel="stylesheet">
     <link th:href="@{css/animate.css}" rel="stylesheet">
     <link th:href="@{css/style.css}" rel="stylesheet">
-    <link th:href="@{css/bootstrapValidator.min.css}" rel="stylesheet">
 </head>
 
 <body>
@@ -46,17 +45,17 @@
                         IN+
                     </div>
                 </li>
-                <li class="active">
+                <li>
                     <a th:href="@{menu}"><i class="fa fa-th-large"></i> <span class="nav-label">商品管理</span> <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
-                        <li class="active"><a th:href="@{menu}"> 菜单管理</a></li>
+                        <li><a th:href="@{menu}"> 菜单管理</a></li>
                         <li><a th:href="@{goods}">商品管理</a></li>
                     </ul>
                 </li>
-                <li>
+                <li class="active">
                     <a th:href="@{order}"><i class="fa fa-th-large"></i> <span class="nav-label">订单管理</span> <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
-                        <li><a th:href="@{order}"> 订单管理</a></li>
+                        <li class="active"><a th:href="@{order}"> 订单管理</a></li>
                     </ul>
                 </li>
             </ul>
@@ -108,48 +107,106 @@
         </nav>
         </div>
         
-        <div class="modal fade" id="addMenu" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
 		    <div class="modal-dialog">
 		        <div class="modal-content">
 		            <div class="modal-header">
 		                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		                <h4 class="modal-title" id="myModalLabel">新增商品分类</h4>
+		                <h4 class="modal-title" id="myModalLabel">订单详情</h4>
 		            </div>
-		            <form id="addForm">
-		            <div class="modal-body">
-		            	<div class="row">
-		            		<div class="form-group">
-			            		<label class="control-label">分类名称：</label>
-			            		<input type="text" name="menuName" id="menuName" class="form-control" />
-		            		</div>
-		            	</div>
-		            	<div class="row">
-		            		<div class="form-group">
-			            		<label class="control-label">父级分类：</label>
-			            		<select name="parent" id="parent" class="form-control">
-			            		 	<option value="0" selected="selected" >选择父级分类...</option>
-                                    <option th:each="parentMenu:${params.parentLs}" th:value="${parentMenu.id}" th:text="${parentMenu.menuName}"></option>
-                                </select>
+		            <form id="orderForm">
+		            	<div class="modal-body">
+		            		<div class="row">
+			            		<div class="form-group">
+				            		<label class="control-label">商品名称：</label>
+				            		<input type="text" name="title" id="title" readonly class="form-control" />
+			            		</div>
+			            	</div>
+			            	<div class="row">
+			            		<div class="form-group">
+				            		<label class="control-label">交易流水号：</label>
+				            		<input type="text" name="traceNo" id="traceNo" readonly class="form-control" />
+			            		</div>
+			            	</div>
+			            	<div class="row">
+			            		<div class="form-group">
+				            		<label class="control-label">周边通订单号：</label>
+				            		<input type="text" name="backTraceNo" id="backTraceNo" readonly class="form-control" />
+			            		</div>
+			            	</div>
+			            	<div class="row">
+			            		<div class="form-group">
+				            		<label class="control-label">订单号：</label>
+				            		<input type="text" name="id" id="id" readonly class="form-control" />
+			            		</div>
+			            	</div>
+			            	<div class="row">
+			            		<div class="form-group col-sm-5">
+			            			<div class="row">
+					            		<label class="control-label">订单状态：</label>
+					            		<input type="text" name="ordrStatus" id="ordrStatus" readonly class="form-control" />
+			            			</div>
+			            		</div>
+			            		<div class="form-group col-sm-2"></div>
+			            		<div class="form-group col-sm-5">
+			            			<div class="row">
+					            		<label class="control-label">物流状态：</label>
+					            		<input type="text" name="deliverStatus" id="deliverStatus" readonly class="form-control" />
+			            			</div>
+			            		</div>
+			            	</div>
+			            	<div class="row">
+			            		<div class="form-group col-sm-5">
+			            			<div class="row">
+					            		<label class="control-label">交易总金额：</label>
+					            		<input type="text" name="totalOrdrAmt" id="totalOrdrAmt" readonly class="form-control" />
+			            			</div>
+			            		</div>
+			            		<div class="form-group col-sm-2"></div>
+			            		<div class="form-group col-sm-5">
+			            			<div class="row">
+					            		<label class="control-label">优惠金额：</label>
+					            		<input type="text" name="discountAmt" id="discountAmt" readonly class="form-control" />
+			            			</div>
+			            		</div>
+			            	</div>
+			            	<div class="row">
+			            		<div class="form-group col-sm-5">
+			            			<div class="row">
+					            		<label class="control-label">实付金额：</label>
+					            		<input type="text" name="payAmt" id="payAmt" readonly class="form-control" />
+			            			</div>
+			            		</div>
+			            		<div class="form-group col-sm-2"></div>
+			            		<div class="form-group col-sm-5">
+			            			<div class="row">
+					            		<label class="control-label">商品数量：</label>
+					            		<input type="text" name="count" id="count" readonly class="form-control" />
+			            			</div>
+			            		</div>
+			            	</div>
+			            	<div class="row">
+			            		<div class="form-group">
+				            		<label class="control-label">收货地址：</label>
+				            		<input type="text" name="recvAddr" id="recvAddr" readonly class="form-control" />
+			            		</div>
+			            	</div>
+			            	<div class="row">
+			            		<div class="form-group">
+				            		<label class="control-label">交易时间：</label>
+				            		<input type="text" name="createTime" id="createTime" readonly class="form-control" />
+			            		</div>
 			            	</div>
 		            	</div>
-		            	<div class="row">
-		            		<div class="form-group">
-			            		<label class="control-label">分类图标：</label>
-			            		<input type="file" name="uploadfile" id="uploadfile" class="file-loading form-control" />
-			            	</div>
-		            	</div>
-		            </div>
 		            </form>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-		                <button type="button" onclick="addClassified()" class="btn btn-primary">提交</button>
 		            </div>
-		        </div><!-- /.modal-content -->
-		    </div><!-- /.modal -->
-		</div>
+		        </div>
+		    </div>
+        </div>
         
         <div class="wrapper wrapper-content animated fadeInRight">
-                
             <div class="row">
             <div class="col-lg-12">
             <div class="ibox float-e-margins">
@@ -166,17 +223,21 @@
             </div>
             <div class="ibox-content">
 	            <div class="">
-		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addMenu" class="btn btn-primary ">新增</a>
+	            	<a  href="javascript:void(0);" onclick="refund()" class="btn btn-danger ">退款</a>
 		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addMenu" class="btn btn-warning ">修改</a>
-		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addMenu" class="btn btn-danger ">删除</a>
+		            <a  href="javascript:void(0);" onclick="showOrder()" class="btn btn-primary ">查看详情</a>
 	            </div>
             <table class="table table-striped table-bordered table-hover " id="editable" >
             <thead>
             <tr>
-                <th style="text-align: center"><input type="checkbox" class="checkchild" /></th>
-                <th>分类名称</th>
-                <th>父菜单</th>
-                <th style="display:none">parentId</th>
+                <th style="text-align: center;"><input type="checkbox" onchange="allselect()" class="checkchild" /></th>
+                <th >商品名称</th>
+                <th >交易流水号</th>
+                <th >周边通订单号</th>
+                <th >订单号</th>
+                <th >交易状态</th>
+                <th >交易总金额</th>
+                <th >物流状态</th>
             </tr>
             </thead>
             <tbody>
@@ -220,17 +281,10 @@
     <!-- Custom and plugin javascript -->
     <script th:src="@{js/inspinia.js}"></script>
     <script th:src="@{js/plugins/pace/pace.min.js}"></script>
-    <script th:src="@{js/plugins/fileinput/sortable.min.js}" type="text/javascript"></script>
-    <script th:src="@{js/fileinput.min.js}" type="text/javascript"></script>
-    <script th:src="@{js/zh.js}" type="text/javascript"></script>
-    <script th:src="@{js/bootstrapValidator.min.js}" type="text/javascript"></script>
-    <script th:src="@{css/themes/explorer-fa/theme.min.js}"type="text/javascript"></script>
-    <script th:src="@{css/themes/fa/theme.min.js}"type="text/javascript"></script>
 <!-- 	<script th:src="@{js/plugins/dropzone/dropzone.js}"></script> -->
     <!-- Page-Level Scripts -->
     <script>
         $(document).ready(function(){
-			validatorInit();
             lang = {
             	    "sProcessing": "处理中...",
             	    "sLengthMenu": "每页 _MENU_ 项",
@@ -264,6 +318,7 @@
             	"order":[],
             	cache: false,
             	sortable: true,
+            	hover:true,
             	serverSide: true,  //启用服务器端分页
             	renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
             	pagingType: "simple_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
@@ -288,12 +343,19 @@
             		 var param = {};
             		 param.length = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
             		 param.start = data.start/data.length;//开始的记录序号
+            		 param.draw = data.draw;//当前页码
+					 param.search = data.search.value;
+					 if(data.order.length > 0){
+	            		 param.orderColumn = data.order[0].column;
+						 param.orderSort = data.order[0].dir;
+					 }
             		 //ajax请求数据
             		 $.ajax({
             		     type: "POST",
-            		     url: "loadMenuWithPage",
+            		     url: "loadOrders",
             		     cache: false,  //禁用缓存
-            		     data: param,
+            		     data: JSON.stringify(param),
+            		     contentType:"application/json",
             		     dataType: "json",
             		     success: function (result) {
             		         //封装返回数据
@@ -313,147 +375,218 @@
             	 },
             	 "columns":[
             		 {
-            			 "data":"id",
+            		 	 "data":"id",
             			 "orderable": false,
             			 "createdCell": function (td, cellData, rowData, row, col) {  
 		                      $(td).css('text-align', 'center'); 
 		                 },
            				 render(data, type, full, meta) { 
-            				 	return '<input type="checkbox" class="checkchild" value="${data}" />';
+            				 	return '<input type="checkbox" class="checkchild" onclick="checktr()" value="${data}" />';
                          }
-
             		 },
             		 {
-            		 	"data":"menuName",
+            		 	"data":"goods.title",
             		 	"orderable": true,
             		 	"searchable": true
             		 },
-            		 {"data":"parentName"},
-            		 {"data":"parentId","visible":false}
+            		 {
+            		 	"data":"trans.traceNo",
+            		 	"orderable": true
+            		 },
+            		 {
+            		 	"data":"trans.backChnlTraceNo",
+            		 	"orderable": true
+            		 },
+            		 {
+            		 	"data":"id",
+            		 	"orderable": true
+            		 },
+            		 {
+            		 	"data":"orderStatus",
+            		 	"orderable": true,
+            		 	render(data, type, full, meta) { 
+            		 		var orderStatus = "";
+				    		if(full.orderStatus == '00'){
+				    			orderStatus = '成功';
+				    		}else if(full.orderStatus == '01'){
+				    			orderStatus = '失败';
+				    		}else if(full.orderStatus == '03'){
+				    			orderStatus = '待支付';
+				    		}else if(full.orderStatus == '04'){
+				    			orderStatus = '取消';
+				    		}else if(full.orderStatus == '05'){
+				    			orderStatus = '未支付';
+				    		}else if(full.orderStatus == '06'){
+				    			orderStatus = '退款中';
+				    		}else if(full.orderStatus == '07'){
+				    			orderStatus = '已退款';
+				    		}
+				    		return orderStatus;
+            		 	}
+            		 },
+            		 {
+            		 	"data":"totalOrdrAmt",
+            		 },
+            		 {
+            		 	"data":"deliverStatus",
+            		 	"orderable": true,
+            		 	render(data, type, full, meta) {
+            		 		var deliverStatus = '';
+				    		if(data.deliverStatus == "01"){
+				    			deliverStatus = '待发货';
+				    		}else if(data.deliverStatus == "02"){
+				    			deliverStatus = '待收货';
+				    		}else{
+				    			deliverStatus = '已收货';
+				    		}
+				    		return deliverStatus;
+            		 	}
+            		 },
+            		 {
+            		 	"data":"",
+            		 	"visible":false,
+            		 	render(data, type, full, meta) {
+            		 		return full;
+            		 	}
+            		 }
             	 ]
             	
             });
             
-            $("#uploadfile").fileinput({
-
-                language: 'zh', //设置语言
-
-                uploadUrl:"upload", //上传的地址
-    			
-                allowedFileTypes : [ 'image' ],//允许上传的文件类型
-                
-               allowedFileExtensions: ['jpg', 'jpeg', 'png','ico'],//接收的文件后缀
-
-               //uploadExtraData:{"id": 1, "fileName":'123.mp3'},
-
-                uploadAsync: true, //默认异步上传
-
-                showUpload:false, //是否显示上传按钮
-
-                showRemove :true, //显示移除按钮
-
-                showPreview :false, //是否显示预览
-
-                showCaption:true,//是否显示标题
-
-                browseClass:"btn btn-primary", //按钮样式    
-
-               dropZoneEnabled: true,//是否显示拖拽区域
-
-               //minImageWidth: 50, //图片的最小宽度
-
-               //minImageHeight: 50,//图片的最小高度
-
-               //maxImageWidth: 1000,//图片的最大宽度
-
-               //maxImageHeight: 1000,//图片的最大高度
-
-                //maxFileSize:0,//单位为kb，如果为0表示不限制文件大小
-
-               //minFileCount: 0,
-
-                maxFileCount:1, //表示允许同时上传的最大文件个数
-
-                enctype:'multipart/form-data',
-
-               validateInitialCount:true,
-
-                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
-
-               msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
-               initialCaption: "选择图片"
-           }).on('fileerror', function(event, data, msg) { //一个文件上传失败
-    			console.log('文件上传失败！'+msg);
-    		});
-            
+            $('#editable tbody').on('click', 'tr', function selectrow(event,s) {
+	           		if(s){
+	           		   $(this).addClass('selected');
+				       $(this).find(".checkchild").prop("checked",true);
+	           		}else if(s == false){
+	           			$(this).removeClass('selected');
+				      	$(this).find(".checkchild").prop("checked",false);
+	           		}else{
+					    if ($(this).hasClass('selected')) {
+					       $(this).removeClass('selected');
+					       $(this).find(".checkchild").prop("checked",false);
+					    } else {
+					       $(this).addClass('selected');
+					       $(this).find(".checkchild").prop("checked",true);
+					    }
+					}
+			});
+			
+			
+	            
+        });
+        
+        $('#editable tbody').on('dblclick','tr',function showDetail(e){
+       	 	var data = $('#editable').dataTable().fnGetData($(this).context.rowIndex);
+        	showDetails(data);
         });
 
-        
-       function validatorInit(){
-       		$('#addForm').bootstrapValidator({
-       			feedbackIcons:{
-       				valid:'glyphicon glyphicon-ok',
-       				invalid:'glyphicon glyphicon-remove',
-       				validating:'glyphicon glyphicon-refresh',
-       			},
-       			fields:{
-       				menuName:{
-       					validators:{
-       						notEmpty:{
-       							message:"菜单名称不可以为空"
-       						}
-       					}
-       				},
-       				uploadfile:{
-       					validators:{
-       						notEmpty: {
-                        		message: '上传图片不能为空'
-		                    },
-		                    file: {
-		                        extension: 'png,jpg,jpeg,ico',
-		                        type: 'image/png,image/jpg,image/jpeg,image/ico',
-		                        message: '请重新选择图片'
-		                    }
-       					}	
-       				}
-       			}
-       		});
-       }
+		function showOrder(){
+		   var rows =  $('#editable').DataTable().rows('.selected').data();
+     	   if(rows.length != 1){
+     	  		alert("有且仅选择一条数据查看详情");
+     	  		return;
+     	   }
+     	   showDetails(rows[0]);
+		}
 
-		//菜单新增
-       function addClassified()
-       {
-       		var validator = $('#addForm').data("bootstrapValidator");
-       		if(!validator.isValid()){
-       			return;
-       		}
-    	   var data = {
-    			   "menuName":$('#menuName').val(),
-    			   "parent":$('#parent').val()
-    			   };
-    	   $.ajax({
-    		data: JSON.stringify(data),
-       		url:  "addMenu",
-       		type: "POST",
-       		contentType:"application/json",
-       		success:function(data){
-       			$("#uploadfile").fileinput('refresh',{
-       				uploadExtraData:{
-       					'id':data.id
-       				}
-       			});
-       			$("#uploadfile").fileinput('upload');
-       			$("#menuName").val("");
-       			$("#uploadfile").fileinput('refresh').fileinput('enable');
-       			$("#parent").select(0);
-       			$('#addMenu').modal('hide');
-       		},
-       		error:function(msg){
-       			console.log("菜单添加失败"+msg)
-       		}
-    	   });
-       }
+		function showDetails(data){
+    		$('#title').val(data.goods.title);
+    		$('#traceNo').val(data.trans.traceNo);
+    		$('#backTraceNo').val(data.trans.backChnlTraceNo);
+    		$('#id').val(data.id);
+    		var orderStatus = "";
+    		if(data.orderStatus == '00'){
+    			orderStatus = '成功';
+    		}else if(data.orderStatus == '01'){
+    			orderStatus = '失败';
+    		}else if(data.orderStatus == '03'){
+    			orderStatus = '待支付';
+    		}else if(data.orderStatus == '04'){
+    			orderStatus = '取消';
+    		}else if(data.orderStatus == '05'){
+    			orderStatus = '未支付';
+    		}else if(data.orderStatus == '06'){
+    			orderStatus = '退款中';
+    		}else if(data.orderStatus == '07'){
+    			orderStatus = '已退款';
+    		}
+    		$('#ordrStatus').val(orderStatus);
+    		var deliverStatus = '';
+    		if(data.deliverStatus == "01"){
+    			deliverStatus = '待发货';
+    		}else if(data.deliverStatus == "02"){
+    			deliverStatus = '待收货';
+    		}else{
+    			deliverStatus = '已收货';
+    		}
+    		$('#deliverStatus').val(deliverStatus);
+    		$('#totalOrdrAmt').val(data.totalOrdrAmt);
+    		$('#discountAmt').val(data.discountAmt);
+    		$('#payAmt').val(data.payAmt);
+    		$('#recvAddr').val(data.address.provice+data.address.city+data.address.county+data.address.detailedAddr);
+    		$('#count').val(data.count);
+    		$('#createTime').val(data.createTime.substring(0,data.createTime.lastIndexOf('+')));
+			$('#orderModal').modal('show');
+		}
+
+        $('#orderModal').on('hide.bs.modal', function () {
+        	$('#title').val('');
+    		$('#traceNo').val('');
+    		$('#backTraceNo').val('');
+    		$('#id').val('');
+    		$('#ordrStatus').val('');
+    		$('#deliverStatus').val('');
+    		$('#totalOrdrAmt').val('');
+    		$('#discountAmt').val('');
+    		$('#payAmt').val('');
+    		$('#recvAddr').val('');
+    		$('#count').val('');
+    		$('#createTime').val('');
+        });
         
+        
+        function refund(){
+        	var rows =  $('#editable').DataTable().rows('.selected').data();
+     	   if(rows.length != 1){
+     	  		alert("有且仅选择一条数据发起退款");
+     	  		return;
+     	   }
+     	   if(rows[0].orderStatus!='00'){
+     	   		alert("订单状态非成功，不可以发起退款");
+     	  		return;
+     	   }
+        	var param = {'id': rows[0].id};
+        	$.ajax({
+  		     type: "POST",
+  		     url: "refund",
+  		     data:JSON.stringify(param),
+  		     cache: false,  //禁用缓存
+  		     data: JSON.stringify(param),
+  		   	 contentType:"application/json",
+  		     success: function (result) {
+  		     	if(result.respcode!='000000'){
+  		     		alert('订单：'+rows[0].id+'退款失败|'+result.respmsg);
+  		     	}
+  		     },
+  		     error:function (msg){
+  		     	alert('订单：'+rows[0].id+'退款失败');
+  		     	console.log(msg);
+  		     }
+  		    });
+        }
+        
+         function checktr(){
+	       		var row = $(this).closest("tr");
+	       		if(row.hasClass('selected')){
+	       			row.removeClass('selected');
+	       		}else{
+	       			row.addClass('selected');
+	       		}
+	       }
+	       //全选行
+	       function allselect(){
+	       		$('#editable tbody').find("tr").trigger("click",$('#editable thead tr .checkchild')[0].checked);
+	       }
        
     </script>
 

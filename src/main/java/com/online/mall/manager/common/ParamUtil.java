@@ -13,4 +13,5 @@ public class ParamUtil {
 		}
 		return RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC);
 	}
+	
 }

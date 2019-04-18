@@ -22,4 +22,20 @@ public interface IConstants {
 	String RESPCODE_COLS_VALIDFAIL = "respcode.cols.validfail";
 	
 	String RESPMSG_COLS_VALIDFAIL = "respmsg.cols.validfail";
+	
+	String RESPCODE_ORDER_NOTEXIST = "respcode.order.notexist";
+	
+	String RESPMSG_ORDER_NOTEXIST = "respmsg.order.notexist";
+	
+	String RESPCODE_SIGNCHECK_ERROR = "respcode.signcheck.error";
+	
+	String RESPMSG_SIGNCHECK_ERROR = "respmsg.signcheck.error";
+	
+	String RESPCODE_REFUND_FAIL = "respcode.refund.fail";
+	
+	String RESPMSG_REFUND_FAIL = "respmsg.refund.fail";
+	
+	String RESPCODE_REFUND_REFUNDING = "respcode.refund.refunding";
+	
+	String RESPMSG_REFUND_REFUNDING = "respmsg.refund.refunding";
 }

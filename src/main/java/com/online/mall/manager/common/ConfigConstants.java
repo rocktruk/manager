@@ -13,7 +13,9 @@ public class ConfigConstants {
 	
 	public static final String ORDER_STATUS_FAILED = "order.status.failed";
 	
-	public static final String ORDER_STATUS_REFUND = "order.status.refund";
+	public static final String ORDER_STATUS_REFUNDING = "order.status.refunding";
+	
+	public static final String ORDER_STATUS_REFUND = "order.status.refunded";
 	
 	public static final String ORDER_STATUS_CANCEL = "order.status.cancel";
 	
@@ -26,7 +28,9 @@ public class ConfigConstants {
 	
 	public static final String TRX_STATUS_REVERSE = "trx.status.reverse";
 	
-	public static final String TRX_STATUS_REFUND = "trx.status.refund";
+	public static final String TRX_STATUS_REFUNDED = "trx.status.refund";
+	
+	public static final String TRX_STATUS_PARTIALREFUND = "trx.status.partialrefund";
 	
 	public static final String TRX_STATUS_INITIAL = "trx.status.initial";
 	
@@ -99,6 +103,11 @@ public class ConfigConstants {
 	
 	public static final String RCMEN_GOODSLS = "rcmen.goodsls";
 	
+	public static final String ORDRTYPE_UPD_REFUND = "ordrtype.upd.refund";
+	
+	public static final String ORDRTYPE_UPD_CANCEL = "ordrtype.upd.cancel";
+	
+	public static final String ORDRTYPE_UPD_COMPLETE = "ordrtype.upd.complete";
 }
 
 

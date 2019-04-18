@@ -22,6 +22,8 @@ public class Trans {
 	@Column(name="BACK_CHANNEL")
 	private String backChannel;
 	
+	@Column(name="REF_TRACE_NO")
+	private String refTraceNo;
 
 	@Column(name="TRX_AMT")
 	private BigDecimal trxAmt; 
@@ -145,5 +147,14 @@ public class Trans {
 	public void setBackChannel(String backChannel) {
 		this.backChannel = backChannel;
 	}
+
+	public String getRefTraceNo() {
+		return refTraceNo;
+	}
+
+	public void setRefTraceNo(String refTraceNo) {
+		this.refTraceNo = refTraceNo;
+	}
+	
 	
 }

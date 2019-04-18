@@ -1,9 +1,19 @@
 package com.online.mall.manager.trans.service;
 
+import java.lang.reflect.Field;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+
+import com.online.mall.manager.common.SignatureUtil;
 
 public class OrderStatusUpdateRequest {
 
+	private static final Logger log = LoggerFactory.getLogger(OrderStatusUpdateRequest.class);
 	
 	private String source;
 	
@@ -67,6 +77,40 @@ public class OrderStatusUpdateRequest {
 		this.refund_price = refund_price;
 	}
 	
-	
+	/**
+	 * 组装请求报文，并签名
+	 * @return
+	 */
+	public String pack()
+	{
+		String msg = "";
+		Map<String,Object> map = new HashMap<String, Object>();
+		Field[] fields = this.getClass().getDeclaredFields();
+		for(Field field : fields)
+		{
+			Object obj;
+			try {
+				if("log".equals(field.getName()))
+				{
+					continue;
+				}
+				obj = field.get(this);
+				if(obj != null)
+				{
+					map.put(field.getName(), obj);
+				}
+			} catch (Exception e) {
+				log.error(e.getMessage(),e);
+			}
+		}
+		try {
+			String signval = SignatureUtil.INTANCE.sign(map);
+			msg = new StringBuilder(SignatureUtil.INTANCE.sortJoin(map)).append("&sign=").append(signval).toString();
+			log.info("create order:"+msg);
+		} catch (NoSuchAlgorithmException e) {
+			log.error(e.getMessage(),e);
+		}
+		return msg;
+	}
 	
 }

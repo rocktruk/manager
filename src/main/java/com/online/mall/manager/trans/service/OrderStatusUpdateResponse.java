@@ -6,7 +6,7 @@ public class OrderStatusUpdateResponse {
 	
 	private String msg;
 	
-	private String data;
+	private Details data;
 
 	public int getStatus() {
 		return status;
@@ -24,15 +24,15 @@ public class OrderStatusUpdateResponse {
 		this.msg = msg;
 	}
 
-	public String getData() {
+	public Details getData() {
 		return data;
 	}
 
-	public void setData(String data) {
+	public void setData(Details data) {
 		this.data = data;
 	}
 	
-	class Details {
+	public class Details {
 		
 		private String order_number;
 		
@@ -63,8 +63,6 @@ public class OrderStatusUpdateResponse {
 		public void setOpen_userid(String open_userid) {
 			this.open_userid = open_userid;
 		}
-		
-		
 		
 		
 	}

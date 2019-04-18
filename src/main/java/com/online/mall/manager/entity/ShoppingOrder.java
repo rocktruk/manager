@@ -6,6 +6,8 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Table(name="SHOP_ORDER")
@@ -15,14 +17,8 @@ public class ShoppingOrder {
 	@Id
 	private String id;
 	
-	@Column(name="CUS_ID")
-	private long cusId;
-	
-	@Column(name="GOODS_ID")
-	private String goodsId;
-	
-	@Column(name="TRANS_NO")
-	private String transNo;
+	@Column(name="REF_TRACE_NO")
+	private String refTraceNo;
 	
 	@Column(name="CREATE_TIME")
 	private Date createTime;
@@ -36,9 +32,6 @@ public class ShoppingOrder {
 	@Column(name="DELIVER_STATUS")
 	private String deliverStatus;
 	
-	@Column(name="ADDRESS_ID")
-	private String addressId;
-	
 	@Column(name="COUNT")
 	private String count;
 	
@@ -50,7 +43,24 @@ public class ShoppingOrder {
 	
 	@Column(name="PAY_AMT")
 	private BigDecimal payAmt;
+	
+	@OneToOne
+	@JoinColumn(name="ADDRESS_ID")
+	private ReceiveAddress address;
 
+	@OneToOne
+	@JoinColumn(name="CUS_ID")
+	private Customer user;
+	
+	@OneToOne
+	@JoinColumn(name="GOODS_ID")
+	private GoodsWithoutDetail goods;
+	
+	@OneToOne
+	@JoinColumn(name="TRANS_NO")
+	private Trans trans;
+	
+	
 	public String getId() {
 		return id;
 	}
@@ -59,28 +69,28 @@ public class ShoppingOrder {
 		this.id = id;
 	}
 
-	public long getCusId() {
-		return cusId;
+	public Customer getUser() {
+		return user;
 	}
 
-	public void setCusId(long cusId) {
-		this.cusId = cusId;
+	public void setUser(Customer user) {
+		this.user = user;
 	}
 
-	public String getGoodsId() {
-		return goodsId;
+	public GoodsWithoutDetail getGoods() {
+		return goods;
 	}
 
-	public void setGoodsId(String goodsId) {
-		this.goodsId = goodsId;
+	public void setGoods(GoodsWithoutDetail goods) {
+		this.goods = goods;
 	}
 
-	public String getTransNo() {
-		return transNo;
+	public Trans getTrans() {
+		return trans;
 	}
 
-	public void setTransNo(String transNo) {
-		this.transNo = transNo;
+	public void setTrans(Trans trans) {
+		this.trans = trans;
 	}
 
 	public Date getCreateTime() {
@@ -115,12 +125,12 @@ public class ShoppingOrder {
 		this.deliverStatus = deliverStatus;
 	}
 
-	public String getAddressId() {
-		return addressId;
+	public ReceiveAddress getAddress() {
+		return address;
 	}
 
-	public void setAddressId(String addressId) {
-		this.addressId = addressId;
+	public void setAddress(ReceiveAddress address) {
+		this.address = address;
 	}
 
 	public String getCount() {
@@ -155,8 +165,13 @@ public class ShoppingOrder {
 		this.payAmt = payAmt;
 	}
 
-	
-	
-	
+	public String getRefTraceNo() {
+		return refTraceNo;
+	}
+
+	public void setRefTraceNo(String refTraceNo) {
+		this.refTraceNo = refTraceNo;
+	}
+
 	
 }
