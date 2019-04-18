@@ -117,6 +117,7 @@
 		            </div>
 		            <form id="addForm">
 		            <div class="modal-body">
+		            	<input type="text" name="menuId" id="menuId" style="display:none" class="form-control" />
 		            	<div class="row">
 		            		<div class="form-group">
 			            		<label class="control-label">分类名称：</label>
@@ -127,7 +128,7 @@
 		            		<div class="form-group">
 			            		<label class="control-label">父级分类：</label>
 			            		<select name="parent" id="parent" class="form-control">
-			            		 	<option value="0" selected="selected" >选择父级分类...</option>
+			            		 	<option value="-1" selected="selected" >选择父级分类...</option>
                                     <option th:each="parentMenu:${params.parentLs}" th:value="${parentMenu.id}" th:text="${parentMenu.menuName}"></option>
                                 </select>
 			            	</div>
@@ -167,13 +168,13 @@
             <div class="ibox-content">
 	            <div class="">
 		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addMenu" class="btn btn-primary ">新增</a>
-		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addMenu" class="btn btn-warning ">修改</a>
+		            <a  href="javascript:void(0);" onclick="showMenu()" class="btn btn-warning ">修改</a>
 		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addMenu" class="btn btn-danger ">删除</a>
 	            </div>
             <table class="table table-striped table-bordered table-hover " id="editable" >
             <thead>
             <tr>
-                <th style="text-align: center"><input type="checkbox" class="checkchild" /></th>
+                <th style="text-align: center"><input type="checkbox" onchange="allselect()" class="checkchild" /></th>
                 <th>分类名称</th>
                 <th>父菜单</th>
                 <th style="display:none">parentId</th>
@@ -319,9 +320,8 @@
 		                      $(td).css('text-align', 'center'); 
 		                 },
            				 render(data, type, full, meta) { 
-            				 	return '<input type="checkbox" class="checkchild" value="${data}" />';
+            				 	return '<input type="checkbox" class="checkchild" onclick="checktr()" value="${data}" />';
                          }
-
             		 },
             		 {
             		 	"data":"menuName",
@@ -389,6 +389,87 @@
         });
 
         
+        $('#editable tbody').on('click', 'tr', function selectrow(event,s) {
+       		if(s){
+       		   $(this).addClass('selected');
+		       $(this).find(".checkchild").prop("checked",true);
+       		}else if(s == false){
+       			$(this).removeClass('selected');
+		      	$(this).find(".checkchild").prop("checked",false);
+       		}else{
+			    if ($(this).hasClass('selected')) {
+			       $(this).removeClass('selected');
+			       $(this).find(".checkchild").prop("checked",false);
+			    } else {
+			       $(this).addClass('selected');
+			       $(this).find(".checkchild").prop("checked",true);
+			    }
+			}
+		});
+        
+        
+        $('#editable tbody').on('dblclick','tr',function showDetail(e){
+       	 	var data = $('#editable').dataTable().fnGetData($(this).context.rowIndex-1);
+        	showDetails(data);
+        });
+
+		function showMenu(){
+		   var rows =  $('#editable').DataTable().rows('.selected').data();
+     	   if(rows.length != 1){
+     	  		alert("有且仅选择一条数据查看详情");
+     	  		return;
+     	   }
+     	   showDetails(rows[0]);
+		}
+        
+		function showDetails(data){
+			$('#menuName').val(data.menuName);
+			$('#parent').val(data.parentId);
+			$('#menuId').val(data.id);
+			$('#addMenu').modal('show');
+		}
+		
+		$('#addMenu').on('shown.bs.modal', function (event) {
+			$('#menuName').trigger('change');
+		});
+		
+		$('#addMenu').on('hide.bs.modal', function (event) {
+			$('#menuName').val();
+			$("#parent").val(-1);
+		});
+		
+		function updateMenu(){
+			var validator = $('#addForm').data("bootstrapValidator");
+       		if(!validator.isValid()){
+       			return;
+       		}
+    	   var data = {
+    			   "menuName":$('#menuName').val(),
+    			   "parent":$('#parent').val()
+    			   };
+    	   $.ajax({
+    		data: JSON.stringify(data),
+       		url:  "addMenu",
+       		type: "POST",
+       		contentType:"application/json",
+       		success:function(data){
+       			$("#uploadfile").fileinput('refresh',{
+       				uploadExtraData:{
+       					'id':data.id
+       				}
+       			});
+       			$("#uploadfile").fileinput('upload');
+       			$("#menuName").val("");
+       			$("#uploadfile").fileinput('refresh').fileinput('enable');
+       			$("#parent").select(-1);
+       			$('#addMenu').modal('hide');
+       		},
+       		error:function(msg){
+       			console.log("菜单添加失败"+msg)
+       		}
+    	   });
+		}
+		
        function validatorInit(){
        		$('#addForm').bootstrapValidator({
        			feedbackIcons:{
@@ -403,19 +484,19 @@
        							message:"菜单名称不可以为空"
        						}
        					}
-       				},
-       				uploadfile:{
-       					validators:{
-       						notEmpty: {
-                        		message: '上传图片不能为空'
-		                    },
-		                    file: {
-		                        extension: 'png,jpg,jpeg,ico',
-		                        type: 'image/png,image/jpg,image/jpeg,image/ico',
-		                        message: '请重新选择图片'
-		                    }
-       					}	
        				}
+//        				uploadfile:{
+//        					validators:{
+//        						notEmpty: {
+//                         		message: '上传图片不能为空'
+// 		                    },
+// 		                    file: {
+// 		                        extension: 'png,jpg,jpeg,ico',
+// 		                        type: 'image/png,image/jpg,image/jpeg,image/ico',
+// 		                        message: '请重新选择图片'
+// 		                    }
+//        					}	
+//        				}
        			}
        		});
        }
@@ -445,7 +526,7 @@
        			$("#uploadfile").fileinput('upload');
        			$("#menuName").val("");
        			$("#uploadfile").fileinput('refresh').fileinput('enable');
-       			$("#parent").select(0);
+       			$("#parent").select(-1);
        			$('#addMenu').modal('hide');
        		},
        		error:function(msg){

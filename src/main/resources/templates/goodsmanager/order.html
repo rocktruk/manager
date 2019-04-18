@@ -453,27 +453,25 @@
             	
             });
             
-            $('#editable tbody').on('click', 'tr', function selectrow(event,s) {
-	           		if(s){
-	           		   $(this).addClass('selected');
-				       $(this).find(".checkchild").prop("checked",true);
-	           		}else if(s == false){
-	           			$(this).removeClass('selected');
-				      	$(this).find(".checkchild").prop("checked",false);
-	           		}else{
-					    if ($(this).hasClass('selected')) {
-					       $(this).removeClass('selected');
-					       $(this).find(".checkchild").prop("checked",false);
-					    } else {
-					       $(this).addClass('selected');
-					       $(this).find(".checkchild").prop("checked",true);
-					    }
-					}
-			});
-			
-			
-	            
         });
+        
+        $('#editable tbody').on('click', 'tr', function selectrow(event,s) {
+       		if(s){
+       		   $(this).addClass('selected');
+		       $(this).find(".checkchild").prop("checked",true);
+       		}else if(s == false){
+       			$(this).removeClass('selected');
+		      	$(this).find(".checkchild").prop("checked",false);
+       		}else{
+			    if ($(this).hasClass('selected')) {
+			       $(this).removeClass('selected');
+			       $(this).find(".checkchild").prop("checked",false);
+			    } else {
+			       $(this).addClass('selected');
+			       $(this).find(".checkchild").prop("checked",true);
+			    }
+			}
+	});
         
         $('#editable tbody').on('dblclick','tr',function showDetail(e){
        	 	var data = $('#editable').dataTable().fnGetData($(this).context.rowIndex);
