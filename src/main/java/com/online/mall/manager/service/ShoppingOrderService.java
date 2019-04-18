@@ -149,6 +149,8 @@ public class ShoppingOrderService extends AbstractMallService{
 					order.get().setRefTraceNo(traceNo);
 					orderRepos.save(order.get());
 				}
+				result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
+				result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
 			} catch (IOException e) {
 				log.error(e.getMessage(),e);
 				result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));

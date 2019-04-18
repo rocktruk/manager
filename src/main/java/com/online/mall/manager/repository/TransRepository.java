@@ -6,6 +6,6 @@ import com.online.mall.manager.entity.Trans;
 
 public interface TransRepository extends IExpandJpaRepository<Trans, String> {
 
-	Optional<Trans> findTransByBackChnlTraceNoAndBackChannel(String backChannel,String backChnlTraceNo);
+	Optional<Trans> findTransByBackChnlTraceNoAndBackChannelAndTrxCode(String backChannel,String backChnlTraceNo,String trxCode);
 	
 }

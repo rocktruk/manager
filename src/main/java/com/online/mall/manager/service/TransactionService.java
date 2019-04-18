@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.online.mall.manager.common.ConfigConstants;
+import com.online.mall.manager.common.DictConstantsUtil;
 import com.online.mall.manager.entity.Trans;
 import com.online.mall.manager.repository.TransRepository;
 
@@ -22,7 +24,7 @@ public class TransactionService {
 	
 	
 	public Optional<Trans> getTransByOrderNum(String backChannel,String backChnlTraceNo){
-		return transRepo.findTransByBackChnlTraceNoAndBackChannel(backChannel, backChnlTraceNo);
+		return transRepo.findTransByBackChnlTraceNoAndBackChannelAndTrxCode(backChannel, backChnlTraceNo,DictConstantsUtil.INSTANCE.getDictVal(ConfigConstants.TRXCODE_REFUND));
 	}
 	
 	

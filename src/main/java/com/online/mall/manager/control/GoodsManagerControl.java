@@ -245,12 +245,12 @@ public class GoodsManagerControl {
 	}
 	
 	/**
-	 * 删除商品
+	 * 删除商品,不允许删除商品
 	 * @param ids
 	 * @return
 	 */
-	@RequestMapping("delGoods")
-	@ResponseBody
+//	@RequestMapping("delGoods")
+//	@ResponseBody
 	public Map<String,Object> delGoods(@RequestBody Map<String,Object> req){
 		Map<String,Object> result = new HashMap<String, Object>();
 		try {
