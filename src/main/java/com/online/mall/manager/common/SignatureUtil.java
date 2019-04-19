@@ -2,7 +2,9 @@ package com.online.mall.manager.common;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPrivateKey;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +23,41 @@ public class SignatureUtil {
 	
 	public static final SignatureUtil INTANCE = new SignatureUtil(signkey);
 	
+	private String privateKey;
+	
+	private String publicKey;
+	
+	private RSAPrivateKey rsaPrivate;
+	
 	private SignatureUtil(@Value("${signkey}") String signkey)
 	{
 		this.signkey = signkey;
+		try {
+			Map<String,Object> keyMap =RsaEntrycpt.generateKeyPair();
+			publicKey = RsaEntrycpt.getPublicKey(keyMap);
+			privateKey = RsaEntrycpt.getPrivateKey(keyMap);
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}
+	}
+	
+	
+	public String encryptByPublicKey(String data) {
+		try {
+			return Base64.getEncoder().encodeToString(RsaEntrycpt.encrypt(data, RsaEntrycpt.getPublicRSAKey(publicKey)));
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}
+		return "";
+	}
+	
+	public String dencryptByPrivateKey(String data) {
+		try {
+			return new String(RsaEntrycpt.decrypt(RsaEntrycpt.decryptBase64(data), RsaEntrycpt.getPrivateRSAKey(privateKey)));
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}
+		return "";
 	}
 	
 	/**
@@ -63,7 +97,7 @@ public class SignatureUtil {
 	 * @return
 	 * @throws NoSuchAlgorithmException
 	 */
-	private String md5(String str) throws NoSuchAlgorithmException
+	public String md5(String str) throws NoSuchAlgorithmException
 	{
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		md.reset();
@@ -92,5 +126,17 @@ public class SignatureUtil {
 		}
 		return result.toString();
 	}
+
+
+	public String getPrivateKey() {
+		return privateKey;
+	}
+
+
+	public String getPublicKey() {
+		return publicKey;
+	}
+	
+	
 	
 }

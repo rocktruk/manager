@@ -70,6 +70,17 @@ public class GoodsMenuService extends AbstractMallService{
 	}
 	
 	@Transactional
+	public void saveMenu(GoodsMenu menu) {
+		goodsMenu.save(menu);
+	}
+	
+	@Transactional
+	public void delMenu(List<GoodsMenu> menus) {
+		goodsMenu.deleteInBatch(menus);
+	}
+	
+	
+	@Transactional
 	public void updateMenuIcon(int id,String imgSrc)
 	{
 		goodsMenu.updateMenuWithId(id,imgSrc);
@@ -146,6 +157,7 @@ public class GoodsMenuService extends AbstractMallService{
 			map.put("id", menu.getId());
 			map.put("menuName", menu.getMenuName());
 			map.put("parentId", menu.getParentId());
+			map.put("imageSrc", menu.getImageSrc());
 			menuMap.put(String.valueOf(menu.getId()), map);
 			result.add(map);
 		}

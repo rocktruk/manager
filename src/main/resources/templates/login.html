@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>INSPINIA | Login</title>
+
+    <link th:href="@{css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{font-awesome/css/font-awesome.css}" rel="stylesheet">
+
+    <link th:href="@{css/animate.css}" rel="stylesheet">
+    <link th:href="@{css/style.css}" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+	<div class="middle-box text-center loginscreen animated fadeInDown">
+		<div>
+
+			<h1 class="logo-name" style="font-size: 100px">LOGIN</h1>
+
+        </div>
+        <div>
+            <form class="m-t" role="form">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="acctNo" placeholder="Username" required="">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" id="pwd" placeholder="Password" required="">
+                </div>
+                <input type="text" style="display:none" id="publicKey" th:value="${pubkey}"/>
+                <button type="submit" onclick="login()" class="btn btn-primary block full-width m-b">Login</button>
+
+               <!-- <a href="login.html#"><small>Forgot password?</small></a>
+                <p class="text-muted text-center"><small>Do not have an account?</small></p>
+                <a class="btn btn-sm btn-white btn-block" href="register.html">Create an account</a>-->
+            </form>
+           <!-- <p class="m-t"> <small>Inspinia we app framework base on Bootstrap 3 &copy; 2014</small> </p>-->
+        </div>
+    </div>
+
+    <!-- Mainly scripts -->
+    <script th:src="@{js/jquery-2.1.1.js}"></script>
+    <script th:src="@{js/bootstrap.min.js}"></script>
+    <script th:src="@{js/encrypy/jsencrypt.min.js}"type="text/javascript"></script>
+	<script type="text/javascript">
+             
+             function login(){
+             	
+             	var encrypt = new JSEncrypt();
+	             encrypt.setPublicKey($("#publicKey").val());
+             	var encryptMsg = encrypt.encrypt($("#pwd").val()).replace(/\+/g,'%2B');
+             	$.ajax({
+		  		     type: "POST",
+		  		     url: "authToken",
+		  		     data:"acctNo="+$('#acctNo').val()+"&pwd="+encryptMsg,
+		  		     cache: false,  //禁用缓存
+		  		     dataType: "json",
+		  		     success: function (result) {
+		  		     	if(result.respcode=='000000'){
+		  		     		window.location.href='menu';
+		  		     	}else{
+		  		     		alert(result.respmsg);
+		  		     	}
+		  		     },
+		  		     error: function (msg) {
+		  		     	console.log(msg);
+		  		     }
+	  		    });
+             }
+	</script>
+</body>
+
+</html>

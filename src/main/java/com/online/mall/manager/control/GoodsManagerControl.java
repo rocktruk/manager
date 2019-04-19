@@ -53,11 +53,6 @@ public class GoodsManagerControl {
 	@Autowired
 	private RcmndCommdyService remndService;
 	
-	@RequestMapping("/index")
-	public String index()
-	{
-		return "index";
-	}
 	
 	@RequestMapping("/menu")
 	public String showMenu(HttpServletRequest request)
@@ -148,6 +143,62 @@ public class GoodsManagerControl {
 			{
 				result.put("id",service.findByMenuName(req.get("menuName").toString()));
 			}
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
+		}catch(Exception e) {
+			log.error(e.getMessage(),e);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SYSERR));
+		}
+		return result;
+	}
+	
+	@RequestMapping("updateMenu")
+	@ResponseBody
+	public Map<String,Object> updateMenu(@RequestBody Map<String,Object> req){
+		Map<String,Object> result = new HashMap<String, Object>();
+		try {
+			String respcode = ParamUtil.validatorColumn(req, new String[]{"id","menuName","parentId","imageSrc"});
+			if(!respcode.equals(RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC))) {
+				result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(respcode));
+				result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getMsgByCode(respcode));
+				return result;
+			}
+			GoodsMenu menu = new GoodsMenu();
+			menu.setId(Integer.parseInt(req.get("id").toString()));
+			menu.setParentId(Integer.parseInt((String)req.get("parentId")));
+			menu.setImageSrc(req.get("imageSrc").toString());
+			menu.setMenuName(req.get("menuName").toString());
+			service.saveMenu(menu);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
+		}catch(Exception e) {
+			log.error(e.getMessage(),e);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SYSERR));
+		}
+		return result;
+	}
+	
+	
+	@RequestMapping("delMenu")
+	@ResponseBody
+	public Map<String,Object> delMenu(@RequestBody Map<String,Object> req){
+		Map<String,Object> result = new HashMap<String, Object>();
+		try {
+			String respcode = ParamUtil.validatorColumn(req, new String[]{"id"});
+			if(!respcode.equals(RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC))) {
+				result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(respcode));
+				result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getMsgByCode(respcode));
+				return result;
+			}
+			List<GoodsMenu> menuLs = new ArrayList<GoodsMenu>();
+			for(int id : (List<Integer>)req.get("id")) {
+				GoodsMenu menu = new GoodsMenu();
+				menu.setId(id);
+				menuLs.add(menu);
+			}
+			service.delMenu(menuLs);
 			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
 			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
 		}catch(Exception e) {

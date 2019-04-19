@@ -101,7 +101,7 @@
 
 
                 <li>
-                    <a href="login.html">
+                    <a th:href="@{logout}">
                         <i class="fa fa-sign-out"></i> Log out
                     </a>
                 </li>
@@ -356,17 +356,10 @@
     <script th:src="@{js/bootstrapValidator.min.extend.js}" type="text/javascript"></script>
     <script th:src="@{css/themes/explorer-fa/theme.min.js}"type="text/javascript"></script>
     <script th:src="@{css/themes/fa/theme.min.js}"type="text/javascript"></script>
-    <script th:src="@{js/md5/md5.min.js}"type="text/javascript"></script>
-    <script th:src="@{js/encrypy/jsencrypt.min.js}"type="text/javascript"></script>
 <!-- 	<script th:src="@{js/plugins/dropzone/dropzone.js}"></script> -->
     <!-- Page-Level Scripts -->
     <script>
         $(document).ready(function(){
-//             console.log(md5.hex("qqqqq"));
-//             var encrypt = new JSEncrypt();
-//             encrypt.setPublicKey($("#publicKeyString").val());
-//             var d=encrypt.encrypt($("#pwd").val());
-//             var ps= encodeURI(d).replace(/\+/g, '%2B');
 			validatorInit();
 			fileinputInit("goodsimg");
 			fileinputInit("uploadfile");

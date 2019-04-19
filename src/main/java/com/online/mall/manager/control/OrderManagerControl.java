@@ -2,6 +2,7 @@ package com.online.mall.manager.control;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -82,6 +83,29 @@ public class OrderManagerControl {
 		return result;
 	}
 	
+	/**
+	 * 更新发货状态
+	 * @param request
+	 * @param req
+	 * @return
+	 */
+	@RequestMapping("updDelvStatu")
+	@ResponseBody
+	public Map<String,Object> updateOrderStatus(HttpServletRequest request,@RequestBody Map<String,Object> req){
+		Map<String,Object> result = new HashMap<String, Object>();
+		try {
+			List<String> orderIds = (List<String>)req.get("orders");
+			orderSrv.updateDeliverStatus(orderIds);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
+		}catch(Exception e) {
+			log.error(e.getMessage(),e);
+			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SYSERR));
+		}
+		
+		return result;
+	}
 	
 	@RequestMapping("refundNotify")
 	@ResponseBody

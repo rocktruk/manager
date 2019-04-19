@@ -68,10 +68,12 @@ public class ShoppingOrderService extends AbstractMallService{
 	static {
 		orderColumn = new HashMap<Integer, String>();
 		orderColumn.put(1, "goods.title");
-		orderColumn.put(2, "user.name");
-		orderColumn.put(3, "trans.traceNo");
-		orderColumn.put(4, "trans.backChnlTraceNo");
-		orderColumn.put(6, "orderStatus");
+		orderColumn.put(2, "trans.backChnlTraceNo");
+		orderColumn.put(3, "id");
+		orderColumn.put(4, "orderStatus");
+		orderColumn.put(5, "totalOrdrAmt");
+		orderColumn.put(6, "deliverStatus");
+		orderColumn.put(7, "trans.createTime");
 	}
 	
 	
@@ -99,6 +101,7 @@ public class ShoppingOrderService extends AbstractMallService{
 	 * @param id
 	 * @return
 	 */
+	@Transactional
 	public Map<String,Object> refund(String id){
 		Map<String,Object> result = new HashMap<String, Object>();
 		Optional<ShoppingOrder> order = findShoppingOrderbyId(id);
@@ -221,6 +224,7 @@ public class ShoppingOrderService extends AbstractMallService{
 	 * @param params
 	 * @return
 	 */
+	@Transactional
 	public Map<String,Object> notifyHandler(Map<String,Object> params){
 		Map<String,Object> result = new HashMap<String, Object>(); 
 		try {
@@ -271,6 +275,15 @@ public class ShoppingOrderService extends AbstractMallService{
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * 发货状态更新
+	 * @param orderIds
+	 */
+	@Transactional
+	public void updateDeliverStatus(List<String> orderIds) {
+		orderRepos.updateShoppingOrderByIdIn(DictConstantsUtil.INSTANCE.getDictVal(ConfigConstants.DELIVER_STATUS_WAITCOLLECT), orderIds);
 	}
 	
 }

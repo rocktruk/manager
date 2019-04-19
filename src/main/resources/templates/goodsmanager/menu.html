@@ -99,7 +99,7 @@
 
 
                 <li>
-                    <a href="login.html">
+                    <a th:href="@{logout}">
                         <i class="fa fa-sign-out"></i> Log out
                     </a>
                 </li>
@@ -118,6 +118,9 @@
 		            <form id="addForm">
 		            <div class="modal-body">
 		            	<input type="text" name="menuId" id="menuId" style="display:none" class="form-control" />
+		            	<input type="text" name="oriMenuName" id="oriMenuName" style="display:none" class="form-control" />
+		            	<input type="text" name="oriParentId" id="oriParentId" style="display:none" class="form-control" />
+		            	<input type="text" name="oriImgSrc" id="oriImgSrc" style="display:none" class="form-control" />
 		            	<div class="row">
 		            		<div class="form-group">
 			            		<label class="control-label">分类名称：</label>
@@ -128,7 +131,7 @@
 		            		<div class="form-group">
 			            		<label class="control-label">父级分类：</label>
 			            		<select name="parent" id="parent" class="form-control">
-			            		 	<option value="-1" selected="selected" >选择父级分类...</option>
+			            		 	<option value="0" selected="selected" >选择父级分类...</option>
                                     <option th:each="parentMenu:${params.parentLs}" th:value="${parentMenu.id}" th:text="${parentMenu.menuName}"></option>
                                 </select>
 			            	</div>
@@ -143,7 +146,7 @@
 		            </form>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-		                <button type="button" onclick="addClassified()" class="btn btn-primary">提交</button>
+		                <button type="button" id="submitbtn" class="btn btn-primary">提交</button>
 		            </div>
 		        </div><!-- /.modal-content -->
 		    </div><!-- /.modal -->
@@ -169,9 +172,9 @@
 	            <div class="">
 		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addMenu" class="btn btn-primary ">新增</a>
 		            <a  href="javascript:void(0);" onclick="showMenu()" class="btn btn-warning ">修改</a>
-		            <a  href="javascript:void(0);" data-toggle="modal" data-target="#addMenu" class="btn btn-danger ">删除</a>
+		            <a  href="javascript:void(0);" onclick="delMenu()" class="btn btn-danger ">删除</a>
 	            </div>
-            <table class="table table-striped table-bordered table-hover " id="editable" >
+            <table class="table table-striped table-bordered table-hover" id="editable" >
             <thead>
             <tr>
                 <th style="text-align: center"><input type="checkbox" onchange="allselect()" class="checkchild" /></th>
@@ -280,7 +283,7 @@
                             $(win.document.body).find('table')
                                     .addClass('compact')
                                     .css('font-size', 'inherit');
-                    }
+                    	}
                     }
                 ],
             	stripeClasses: ["odd", "even"],  //为奇偶行加上样式，兼容不支持CSS伪类的场合
@@ -426,16 +429,34 @@
 			$('#menuName').val(data.menuName);
 			$('#parent').val(data.parentId);
 			$('#menuId').val(data.id);
+			$('#oriImgSrc').val(data.imageSrc);
+			$('#oriParentId').val(data.parentId);
+			$('#oriMenuName').val(data.menuName);
+			$('#myModalLabel').text('修改商品分类');
 			$('#addMenu').modal('show');
 		}
 		
 		$('#addMenu').on('shown.bs.modal', function (event) {
 			$('#menuName').trigger('change');
+			if(event.relatedTarget){
+	       		$('#submitbtn').on('click',function(){
+	       			addClassified();
+	       		})
+	       	}else{
+	       		$('#submitbtn').on('click',function(){
+	       			updateMenu();
+	       		});
+	       	}
 		});
 		
 		$('#addMenu').on('hide.bs.modal', function (event) {
-			$('#menuName').val();
-			$("#parent").val(-1);
+			$('#menuName').val('');
+			$("#parent").val(0);
+			$('submitbtn').off('click');
+			$('#myModalLabel').text('新增商品分类');
+			$("#addForm").data('bootstrapValidator').destroy();
+			$('#addForm').data('bootstrapValidator',null);
+			validatorInit();
 		});
 		
 		function updateMenu(){
@@ -444,29 +465,71 @@
        			return;
        		}
     	   var data = {
+    	   		   "id":$("#menuId").val(),
     			   "menuName":$('#menuName').val(),
-    			   "parent":$('#parent').val()
+    			   "parentId":$('#parent').val()
     			   };
-    	   $.ajax({
-    		data: JSON.stringify(data),
-       		url:  "addMenu",
-       		type: "POST",
-       		contentType:"application/json",
-       		success:function(data){
-       			$("#uploadfile").fileinput('refresh',{
+    		if(!$("#uploadfile")[0].files.length){
+    			data.imageSrc = $('#oriImgSrc').val();
+    		}else{
+    			$("#uploadfile").fileinput('refresh',{
        				uploadExtraData:{
        					'id':data.id
        				}
        			});
        			$("#uploadfile").fileinput('upload');
-       			$("#menuName").val("");
        			$("#uploadfile").fileinput('refresh').fileinput('enable');
-       			$("#parent").select(-1);
-       			$('#addMenu').modal('hide');
+    		}
+    		if($('#menuName').val() == $('#oriMenuName').val()&&$('#parent').val()==$('#oriParentId').val()){
+    			$('#addMenu').modal('hide');
+    			return;
+    		}
+    	   $.ajax({
+    		data: JSON.stringify(data),
+       		url:  "updateMenu",
+       		type: "POST",
+       		contentType:"application/json",
+       		success:function(data){
+       			if(data.respcode=='000000'){
+       				$('#editable').DataTable().ajax.reload();
+       				$('#addMenu').modal('hide');
+       			}else{
+       				alert(data.respmsg);
+       			}
        		},
        		error:function(msg){
        			console.log("菜单添加失败"+msg)
        		}
+    	   });
+		}
+		
+		function delMenu(){
+			var rows =  $('#editable').DataTable().rows('.selected').data();
+     	   if(rows.length < 1){
+     	  		alert("请至少选择一条数据以做删除");
+     	  		return;
+     	   }
+     	   var delIds = [];
+     	   for(var n=0;n<rows.length;n++){
+     	   		delIds[n] = rows[n].id;
+     	   }
+     	   var param = {
+     	   		"id":delIds
+     	   };
+			$.ajax({
+	    		data: JSON.stringify(param),
+	       		url:  "delMenu",
+	       		type: "POST",
+	       		contentType:"application/json",
+	       		success:function(data){
+	       			if(data.respcode!='000000'){
+	       				alert(data.respmsg);
+	       			}
+	       			$('#editable').DataTable().ajax.reload();
+	       		},
+	       		error:function(msg){
+	       			console.log("菜单添加失败"+msg)
+	       		}
     	   });
 		}
 		
@@ -479,6 +542,7 @@
        			},
        			fields:{
        				menuName:{
+       					trigger:"change",
        					validators:{
        						notEmpty:{
        							message:"菜单名称不可以为空"
@@ -518,15 +582,16 @@
        		type: "POST",
        		contentType:"application/json",
        		success:function(data){
-       			$("#uploadfile").fileinput('refresh',{
-       				uploadExtraData:{
-       					'id':data.id
-       				}
-       			});
-       			$("#uploadfile").fileinput('upload');
-       			$("#menuName").val("");
-       			$("#uploadfile").fileinput('refresh').fileinput('enable');
-       			$("#parent").select(-1);
+       			$('#editable').DataTable().ajax.reload();
+       			if($("#uploadfile")[0].files.length){
+	       			$("#uploadfile").fileinput('refresh',{
+	       				uploadExtraData:{
+	       					'id':data.id
+	       				}
+	       			});
+	       			$("#uploadfile").fileinput('upload');
+	       			$("#uploadfile").fileinput('refresh').fileinput('enable');
+	       		}
        			$('#addMenu').modal('hide');
        		},
        		error:function(msg){
@@ -534,7 +599,19 @@
        		}
     	   });
        }
-        
+       
+        function checktr(){
+	       		var row = $(this).closest("tr");
+	       		if(row.hasClass('selected')){
+	       			row.removeClass('selected');
+	       		}else{
+	       			row.addClass('selected');
+	       		}
+	       }
+	       //全选行
+	       function allselect(){
+	       		$('#editable tbody').find("tr").trigger("click",$('#editable thead tr .checkchild')[0].checked);
+	       }
        
     </script>
 

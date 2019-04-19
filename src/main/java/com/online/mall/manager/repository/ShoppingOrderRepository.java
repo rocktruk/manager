@@ -1,6 +1,7 @@
 package com.online.mall.manager.repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +32,10 @@ public interface ShoppingOrderRepository extends IExpandJpaRepository<ShoppingOr
 	Optional<ShoppingOrder> findShoppingOrderById(String id);
 	
 	Optional<ShoppingOrder> findShoppingOrderByRefTraceNo(String reftraceNo);
+	
+	
+	@Modifying
+	@Transactional
+	@Query("update ShoppingOrder s set s.deliverStatus=?1 where s.id in (?2)")
+	int updateShoppingOrderByIdIn(String status,Collection<String> id);
 }

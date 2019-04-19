@@ -38,4 +38,8 @@ public interface IConstants {
 	String RESPCODE_REFUND_REFUNDING = "respcode.refund.refunding";
 	
 	String RESPMSG_REFUND_REFUNDING = "respmsg.refund.refunding";
+	
+	String RESPCODE_LOGIN_FAIL = "respcode.login.fail";
+	
+	String RESPMSG_LOGIN_FAIL = "respmsg.login.fail";
 }

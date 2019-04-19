@@ -18,4 +18,10 @@ public class MerAdminService extends AbstractMallService {
 	public Optional<MerAdmin> findMerById(long id) {
 		return merRepository.findById(id);
 	}
+	
+	
+	public Optional<MerAdmin> findMerByAcctNo(String acctNo){
+		return merRepository.findMerAdminByAcctName(acctNo);
+	}
+	
 }
