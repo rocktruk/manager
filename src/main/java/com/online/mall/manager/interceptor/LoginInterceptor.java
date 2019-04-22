@@ -25,9 +25,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 		String requestId = UUID.randomUUID().toString();
 		MDC.put("requestId", requestId);
 		request.setAttribute("startTime", start);
-		if("/login".equals(request.getServletPath())) {
-			return true;
-		}
 		MerAdmin user = (MerAdmin)SessionUtil.getAttribute(request.getSession(), SessionUtil.USER);
 		if(user == null)
 		{
@@ -38,11 +35,4 @@ public class LoginInterceptor implements HandlerInterceptor {
 		return true;
 	}
 	
-	
-	
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-			throws Exception {
-		HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
-	}
 }

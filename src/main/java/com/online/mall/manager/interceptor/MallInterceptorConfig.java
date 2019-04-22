@@ -17,7 +17,7 @@ public class MallInterceptorConfig implements WebMvcConfigurer {
 	 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(accessIntcpt).addPathPatterns("/**").excludePathPatterns("/js/**","/Angular/**","/css/**","/font-awesome/**","/img/**","/authToken",uploadPath,"/error");
+		registry.addInterceptor(accessIntcpt).addPathPatterns("/**").excludePathPatterns("/js/**","/Angular/**","/css/**","/font-awesome/**","/img/**","/login","/authToken",uploadPath,"/error");
 		
 	}
 	

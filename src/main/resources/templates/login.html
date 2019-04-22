@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>INSPINIA | Login</title>
+    <title>登陆</title>
 
     <link th:href="@{css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{font-awesome/css/font-awesome.css}" rel="stylesheet">
@@ -33,7 +33,7 @@
                     <input type="password" class="form-control" id="pwd" placeholder="Password" required="">
                 </div>
                 <input type="text" style="display:none" id="publicKey" th:value="${pubkey}"/>
-                <button type="submit" onclick="login()" class="btn btn-primary block full-width m-b">Login</button>
+                <a onclick="login()" href="javascript:;" class="btn btn-primary block full-width m-b">Login</a>
 
                <!-- <a href="login.html#"><small>Forgot password?</small></a>
                 <p class="text-muted text-center"><small>Do not have an account?</small></p>
@@ -45,8 +45,8 @@
 
     <!-- Mainly scripts -->
     <script th:src="@{js/jquery-2.1.1.js}"></script>
-    <script th:src="@{js/bootstrap.min.js}"></script>
-    <script th:src="@{js/encrypy/jsencrypt.min.js}"type="text/javascript"></script>
+    <script th:src="@{js/bootstrap.min.js}" type="text/javascript"></script>
+    <script th:src="@{js/encrypy/jsencrypt.min.js}" type="text/javascript"></script>
 	<script type="text/javascript">
              
              function login(){
