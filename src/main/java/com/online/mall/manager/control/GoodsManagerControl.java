@@ -349,8 +349,11 @@ public class GoodsManagerControl {
 		Map<String,Object> result = new HashMap<String, Object>();
 		try {
 			goodsService.updateBatchGoodsStatus(req.get("goodsId"), req.get("statu"));
+			if(DictConstantsUtil.INSTANCE.getDictVal(ConfigConstants.GOODS_STATUS_STAYON).equals(req.get("statu"))) {
+				remndService.delRcmndWhichSaleOut(Arrays.asList(req.get("goodsId").split(",")));
+			}
 			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SUC));
-			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC));
+			result.put(IConstants.RESP_MSG, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPMSG_SUC)); 
 		}catch(Exception e) {
 			log.error(e.getMessage(),e);
 			result.put(IConstants.RESP_CODE, RespConstantsUtil.INSTANCE.getDictVal(IConstants.RESPCODE_SYSERR));

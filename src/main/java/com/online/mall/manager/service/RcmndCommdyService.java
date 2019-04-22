@@ -55,6 +55,7 @@ public class RcmndCommdyService extends AbstractMallService {
 	 * @param rcmmdCommdy
 	 * @param type
 	 */
+	@Transactional
 	public void addRcmnd(List<RecommendCommodities> rcmndCommdy,List<String> goods,List<String> goodsIds) {
 		List<RecommendCommodities> saveRcmnd = rcmndCommdy.stream().filter(h -> !goods.contains(h.getGoods().getId())).collect(Collectors.toList());
 		List<String> delRcmnd = goods.stream().filter(g -> !goodsIds.contains(g)).collect(Collectors.toList());
@@ -65,6 +66,12 @@ public class RcmndCommdyService extends AbstractMallService {
 			save(saveRcmnd);
 		}
 	}
+	
+	@Transactional
+	public void delRcmndWhichSaleOut(List<String> goodsLs) {
+		rcmndRepository.delRecommendCommoditiesByGoodsId(goodsLs);
+	}
+	
 	
 	public void save(List<RecommendCommodities> rcmmdCommdy) {
 		rcmndRepository.saveAll(rcmmdCommdy);
