@@ -281,7 +281,7 @@ public class GoodsManagerControl {
 			goods.setOriPrice(req.get("oriPrice")==null?BigDecimal.ZERO.setScale(2):new BigDecimal((String)req.get("oriPrice")).setScale(2));
 			goods.setPrice(new BigDecimal((String)req.get("price")).setScale(2));
 			goods.setSpecification((String)req.get("specification"));
-			goods.setStatus(DictConstantsUtil.INSTANCE.getDictVal(ConfigConstants.GOODS_STATUS_TOSALE));
+			goods.setStatus((String)req.get("state"));
 			goods.setTitle((String)req.get("title"));
 			goodsService.saveGoods(goods);
 			result.put("id", goodsId);

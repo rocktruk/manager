@@ -37,6 +37,9 @@ public class Trans {
 	@Column(name="TRX_CODE")
 	private String trxCode;
 	
+	@Column(name="RESP_MSG")
+	private String respMsg;
+	
 	@Column(name="REFUNDED_AMT")
 	private BigDecimal refundedAmt;
 	
@@ -154,6 +157,14 @@ public class Trans {
 
 	public void setRefTraceNo(String refTraceNo) {
 		this.refTraceNo = refTraceNo;
+	}
+
+	public String getRespMsg() {
+		return respMsg;
+	}
+
+	public void setRespMsg(String respMsg) {
+		this.respMsg = respMsg;
 	}
 	
 	
