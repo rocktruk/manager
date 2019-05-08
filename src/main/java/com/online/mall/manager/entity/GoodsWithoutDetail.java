@@ -54,8 +54,11 @@ public class GoodsWithoutDetail {
 	@Column(name="TOTAL_SALES")
 	private long totalSales;
 	
-	@Column(name="CREATE_TIME",columnDefinition="timestamp")
+	@Column(name="CREATE_TIME",columnDefinition="timestamp",insertable=false,updatable=false)
 	private Date createTime;
+	
+	@Column(name="LST_UPD_DATE",insertable=false,updatable=false)
+	private Date lstUpdDate;
 	
 	@Column(name="BANNER_IMAGES")
 	private String banerImages;
@@ -199,6 +202,14 @@ public class GoodsWithoutDetail {
 
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+
+	public Date getLstUpdDate() {
+		return lstUpdDate;
+	}
+
+	public void setLstUpdDate(Date lstUpdDate) {
+		this.lstUpdDate = lstUpdDate;
 	}
 
 	
