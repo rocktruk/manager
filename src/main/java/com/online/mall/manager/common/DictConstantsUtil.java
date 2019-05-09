@@ -32,7 +32,7 @@ public class DictConstantsUtil {
 	{
 		Properties dict = new Properties();
 		try {
-			dict.load(new InputStreamReader(new FileInputStream(new File(DictConstantsUtil.class.getResource("/dict.properties").getFile()))));
+			dict.load(new InputStreamReader(DictConstantsUtil.class.getClassLoader().getResourceAsStream("dict.properties")));
 		} catch (FileNotFoundException e) {
 			log.error(e.getMessage(),e);
 		} catch (IOException e) {

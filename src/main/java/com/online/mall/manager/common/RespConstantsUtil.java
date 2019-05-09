@@ -37,7 +37,7 @@ public class RespConstantsUtil {
 	{
 		Properties dict = new Properties();
 		try {
-			dict.load(new InputStreamReader(new FileInputStream(new File(RespConstantsUtil.class.getResource("/respcode.properties").getFile()))));
+			dict.load(new InputStreamReader(RespConstantsUtil.class.getClassLoader().getResourceAsStream("respcode.properties")));
 			for(Entry<Object, Object> entry : dict.entrySet())
 			{
 				if(entry.getKey().toString().startsWith(IConstants.RESP_CODE))

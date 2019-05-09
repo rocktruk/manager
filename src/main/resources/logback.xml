@@ -1,4 +1,4 @@
-<configuration scan="true" scanPeriod="60 seconds" debug="true">
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
   <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>
@@ -23,12 +23,21 @@
 	
     <logger name="com.online.mall.manager" level="debug" additivity="false">
         <appender-ref ref="tracelog"/>
-        <appender-ref ref="stdout"/>
+        <!-- <appender-ref ref="stdout"/> -->
     </logger>
+	
+	<logger name="com.zaxxer.hikari.pool" level="error" additivity="false">
+		<appender-ref ref="tracelog"/>
+        <!-- <appender-ref ref="stdout"/> -->
+	</logger>
+	
+	<logger name="org.hibernate.hql.internal" level="debug" additivity="false">
+		<appender-ref ref="tracelog"/>
+	</logger>
 	
   <root level="debug">
  	<appender-ref ref="tracelog"/>
-	<appender-ref ref="stdout"/>
+	<!-- <appender-ref ref="stdout"/> -->
   </root>
 
 </configuration>
